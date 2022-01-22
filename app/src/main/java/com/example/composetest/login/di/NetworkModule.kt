@@ -1,5 +1,9 @@
 package com.example.composetest.login.di
 
+import com.example.composetest.login.data.remote.api.AuthApi
+import com.example.composetest.login.data.remote.api.AuthApiImpl
+import com.example.composetest.login.data.remote.repository.AuthRepositoryImpl
+import com.example.composetest.login.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,12 +13,13 @@ import io.ktor.client.engine.android.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-
 object NetworkModule {
 
     @Provides
@@ -22,6 +27,10 @@ object NetworkModule {
     fun provideJson():Json{
         return Json { ignoreUnknownKeys = true }
     }
+
+    @Provides
+    fun provideCoroutineDispatcher():CoroutineDispatcher = Dispatchers.Main
+
 
     @Provides
     @Singleton
@@ -46,4 +55,5 @@ object NetworkModule {
             }
         }
     }
+
 }
