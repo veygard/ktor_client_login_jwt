@@ -17,7 +17,7 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 
-class AuthApiImpl @Inject constructor(httpClient: HttpClient, json: Json) : AuthApi {
+class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     private val _basePath = Constants.BASE_URL
     private val _httpClient = httpClient
     private val _json = json
