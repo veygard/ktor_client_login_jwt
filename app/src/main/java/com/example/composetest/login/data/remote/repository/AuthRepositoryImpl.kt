@@ -12,12 +12,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class AuthRepositoryImpl @Inject constructor(
+internal class AuthRepositoryImpl(
     private val authApi: AuthApi,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val dataStore: DataStoreOperations
 ) : AuthRepository {
-    private val _dataStore = dataStore
 
     override suspend fun login(
         phone: String,
@@ -31,7 +30,7 @@ internal class AuthRepositoryImpl @Inject constructor(
                     password = password
                 )
             )
-            _dataStore.saveToken(response?.jwt)
+            dataStore.saveToken(response?.jwt)
             val tokenDTO = TokenDTO(
                 jwt = response!!.jwt,
             )

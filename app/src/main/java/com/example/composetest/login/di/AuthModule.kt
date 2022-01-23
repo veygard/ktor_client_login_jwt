@@ -1,6 +1,7 @@
 package com.example.composetest.login.di
 
 import android.content.Context
+import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.data.remote.api.AuthApi
 import com.example.composetest.login.data.remote.api.AuthApiImpl
 import com.example.composetest.login.data.remote.repository.AuthRepositoryImpl
@@ -14,6 +15,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
 @Module
@@ -22,21 +26,26 @@ object AuthModule {
 
     @Provides
     @Singleton
-    fun provideAuthApi(): AuthApi = AuthApiImpl(provideHttpClient(), NetworkModule.provideJson())
+    fun provideAuthApi(
+        httpClient: HttpClient,
+        json: Json
+    ): AuthApi = AuthApiImpl(httpClient, json)
 
     @Provides
     @Singleton
     fun provideAuthRepository(
-        @ApplicationContext context: Context
-    ): AuthRepository = AuthRepositoryImpl(provideAuthApi(), NetworkModule.provideCoroutineDispatcher(), provideDataStoreOperations(context))
+        authApi: AuthApi,
+        coroutineDispatcher: CoroutineDispatcher,
+        dataStoreOperations: DataStoreOperations
+    ): AuthRepository = AuthRepositoryImpl(authApi, coroutineDispatcher, dataStoreOperations)
 
     @Provides
     @Singleton
     fun provideUseCases(
-        @ApplicationContext context1: Context
+        authRepository: AuthRepository
     ): AuthUseCases {
         return AuthUseCases(
-            loginUseCase = LoginUseCase(authRepository = provideAuthRepository(context1))
+            loginUseCase = LoginUseCase(authRepository = authRepository)
         )
     }
 
