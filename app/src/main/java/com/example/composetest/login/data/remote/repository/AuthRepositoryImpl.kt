@@ -1,6 +1,7 @@
 package com.example.composetest.login.data.remote.repository
 
 import android.util.Log
+import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.data.remote.api.AuthApi
 import com.example.composetest.login.data.remote.model.auth.*
 import com.example.composetest.login.domain.model.Response
@@ -9,12 +10,14 @@ import com.example.composetest.login.data.remote.storage.TokenDTO
 import com.example.composetest.login.domain.model.Token
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-internal class AuthRepositoryImpl (
+internal class AuthRepositoryImpl @Inject constructor(
     private val authApi: AuthApi,
     private val coroutineDispatcher: CoroutineDispatcher,
+    private val dataStore: DataStoreOperations
 ) : AuthRepository {
-
+    private val _dataStore = dataStore
 
     override suspend fun login(
         phone: String,
@@ -28,6 +31,7 @@ internal class AuthRepositoryImpl (
                     password = password
                 )
             )
+            _dataStore.saveToken(response?.jwt)
             val tokenDTO = TokenDTO(
                 jwt = response!!.jwt,
             )

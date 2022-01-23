@@ -14,11 +14,10 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 
-
-
-class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
+class AuthApiImpl @Inject constructor(httpClient: HttpClient, json: Json) : AuthApi {
     private val _basePath = Constants.BASE_URL
     private val _httpClient = httpClient
     private val _json = json
@@ -26,7 +25,7 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
 
     override suspend fun userAuthenticationRequest(
         contentType: kotlin.String?,
-        data: UserAuthenticationRequest?
+        body: UserAuthenticationRequest?
     ): UserAuthenticationResponse {
         val builder = HttpRequestBuilder()
 
@@ -40,12 +39,12 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
             }
         }
         @Suppress("SENSELESS_COMPARISON")
-        if (data != null) {
+        if (body != null) {
             builder.body = TextContent(
 
                 _json.encodeToString(
                     UserAuthenticationRequest.serializer(),
-                    data
+                    body
                 ),
                 ContentType.Application.Json.withoutParameters()
             )
