@@ -10,6 +10,7 @@ import com.example.composetest.login.di.NetworkModule.provideHttpClient
 import com.example.composetest.login.domain.repository.AuthRepository
 import com.example.composetest.login.domain.use_cases.auth.LoginUseCase
 import com.example.composetest.login.domain.use_cases.auth.AuthUseCases
+import com.example.composetest.login.domain.use_cases.auth.GetUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,7 +46,8 @@ object AuthModule {
         authRepository: AuthRepository
     ): AuthUseCases {
         return AuthUseCases(
-            loginUseCase = LoginUseCase(authRepository = authRepository)
+            loginUseCase = LoginUseCase(authRepository = authRepository),
+            getUser =  GetUserUseCase(authRepository = authRepository)
         )
     }
 

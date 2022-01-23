@@ -108,6 +108,8 @@ class AuthApiImpl (httpClient: HttpClient, json: Json) : AuthApi {
         val builder = HttpRequestBuilder()
 
         builder.method = HttpMethod.Get
+
+
         builder.url {
             takeFrom(_basePath)
             encodedPath = encodedPath.let { startingPath ->
@@ -118,7 +120,7 @@ class AuthApiImpl (httpClient: HttpClient, json: Json) : AuthApi {
 
         with(builder.headers) {
             append("Accept", "application/json")
-            append("Authorization", "$authorization")
+            append("Authorization", "Bearer $authorization")
         }
 
         try {

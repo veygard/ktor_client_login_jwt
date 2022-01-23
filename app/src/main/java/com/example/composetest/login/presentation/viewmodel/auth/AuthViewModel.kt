@@ -39,9 +39,9 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun authorize() {
+    fun getUser() {
         viewModelScope.launch {
-            val result = authUseCases.authorize.get()
+            val result = authUseCases.getUser.get()
             when (result) {
                 is Response.Success -> {
                     _authState.value = AuthState.GetUser(result.dataValue)

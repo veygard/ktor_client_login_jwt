@@ -1,26 +1,47 @@
 package com.example.composetest.login.presentation.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.data.local.repository.DataStoreOperationsImpl
+import com.example.composetest.login.presentation.viewmodel.auth.AuthState
 import com.example.composetest.login.presentation.viewmodel.auth.AuthViewModel
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-@Inject
-lateinit var dataStoreOperationsImpl: DataStoreOperationsImpl
+
 
 @Composable
 fun HomeScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    val dataStoreOperations: DataStoreOperations = DataStoreOperationsImpl(context)
+
+    val authState = remember { mutableStateOf("User not authorized")}
+    val jwt:MutableState<String?> = remember { mutableStateOf(null)}
+
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = true, block =  {
+        jwt.value = dataStoreOperations.readToken().stateIn(coroutineScope).value
+    })
+
+    authViewModel.authState.addObserver { result ->
+        when(result){
+            is AuthState.GetUser -> {
+                authState.value = "Authorized, id: ${result.user?.userId}"
+            }
+        }
+    }
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -31,5 +52,15 @@ fun HomeScreen(
         Button(onClick = { authViewModel.login("73333333333", "Qazxsw21") }) {
             Text(text = "Login")
         }
+        Text(text = jwt.value?:"null")
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Column() {
+            Text(text = authState.value)
+            Button(onClick = { authViewModel.getUser() }) {
+                Text(text = "Get User")
+            }
+        }
+
     }
 }

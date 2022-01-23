@@ -7,7 +7,6 @@ data class Token(
 )
 
 fun Token.toDomain() = TokenDTO(jwt = this.jwt)
-fun Token.toRequest() = AuthorizeUserRequest(jwt = this.jwt)
 
 fun decodeUserId(token: String?): String? {
     if (token.isNullOrEmpty()) {
