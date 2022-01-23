@@ -1,6 +1,5 @@
 package com.example.composetest.login.data.remote.api
 
-import android.util.Log
 import com.example.composetest.login.data.remote.model.auth.UserAuthenticationResponse
 import com.example.composetest.login.data.remote.model.auth.*
 import com.example.composetest.login.data.remote.model.auth.PasswordResetResponse
@@ -11,10 +10,12 @@ import io.ktor.client.engine.android.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
+
+
 
 
 class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
@@ -23,31 +24,31 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     private val _json = json
 
 
-    @Suppress("UNCHECKED_CAST")
-    override suspend fun userAuthenticationRequest(contentType: kotlin.String?, body: UserAuthenticationRequest?) : UserAuthenticationResponse {
+    override suspend fun userAuthenticationRequest(
+        contentType: kotlin.String?,
+        data: UserAuthenticationRequest?
+    ): UserAuthenticationResponse {
         val builder = HttpRequestBuilder()
+
 
         builder.method = HttpMethod.Post
         builder.url {
             takeFrom(_basePath)
             encodedPath = encodedPath.let { startingPath ->
-                path("auth-api/v1/authenticate")
+                path("/login")
                 return@let startingPath + encodedPath.substring(1)
             }
         }
         @Suppress("SENSELESS_COMPARISON")
-        if(body != null) {
+        if (data != null) {
             builder.body = TextContent(
 
-                _json.encodeToString(UserAuthenticationRequest.serializer(),
-
-                    body),
+                _json.encodeToString(
+                    UserAuthenticationRequest.serializer(),
+                    data
+                ),
                 ContentType.Application.Json.withoutParameters()
             )
-        }
-
-        with(builder.headers) {
-            append("Accept", "application/json")
         }
 
         try {
@@ -177,7 +178,6 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     }
 
 
-
     @Suppress("UNCHECKED_CAST")
     override suspend fun sendOTPRequest(
         contentType: String?,
@@ -267,7 +267,10 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     }
 
     @Suppress("UNCHECKED_CAST")
-    override suspend fun userCheckRequest(contentType: kotlin.String?, body: UserCheckRequest?) : UserCheckResponse {
+    override suspend fun userCheckRequest(
+        contentType: kotlin.String?,
+        body: UserCheckRequest?
+    ): UserCheckResponse {
         val builder = HttpRequestBuilder()
 
         builder.method = HttpMethod.Post
@@ -279,13 +282,14 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
             }
         }
         @Suppress("SENSELESS_COMPARISON")
-        if(body != null) {
+        if (body != null) {
             builder.body = TextContent(
 
                 _json.encodeToString(
                     UserCheckRequest.serializer(),
 
-                    body),
+                    body
+                ),
                 ContentType.Application.Json.withoutParameters()
             )
         }
@@ -310,7 +314,7 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
         contentType: kotlin.String?,
         body: PasswordResetRequest?,
         authorization: String?
-    ) : PasswordResetResponse {
+    ): PasswordResetResponse {
         val builder = HttpRequestBuilder()
 
         builder.method = HttpMethod.Post
@@ -322,13 +326,14 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
             }
         }
         @Suppress("SENSELESS_COMPARISON")
-        if(body != null) {
+        if (body != null) {
             builder.body = TextContent(
 
                 _json.encodeToString(
                     PasswordResetRequest.serializer(),
 
-                    body),
+                    body
+                ),
                 ContentType.Application.Json.withoutParameters()
             )
         }

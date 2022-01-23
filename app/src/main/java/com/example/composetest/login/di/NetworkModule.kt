@@ -1,9 +1,5 @@
 package com.example.composetest.login.di
 
-import com.example.composetest.login.data.remote.api.AuthApi
-import com.example.composetest.login.data.remote.api.AuthApiImpl
-import com.example.composetest.login.data.remote.repository.AuthRepositoryImpl
-import com.example.composetest.login.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,7 +31,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideHttpClient(): HttpClient {
-        return HttpClient(Android) {
+        return HttpClient() {
             install(JsonFeature) {
                 serializer = KotlinxSerializer(provideJson())
             }

@@ -10,10 +10,4 @@ data class UserAuthenticationResponse (
     
     @SerialName("jwt")
     val jwt: kotlin.String? = null,
-    
-//    @SerialName("refresh_token")
-//    val refreshToken: kotlin.String? = null,
-//
-//    @SerialName("refresh_token_exp")
-//    val refreshTokenExp: kotlin.String? = null
 )
