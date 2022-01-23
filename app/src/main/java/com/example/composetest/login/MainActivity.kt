@@ -3,16 +3,18 @@ package com.example.composetest.login
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavHostController
-import com.example.composetest.login.presentation.screen.HomeScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.composetest.login.navigation.SetupNavGraph
 import com.example.composetest.login.ui.theme.AppTheme
+import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalPagerApi
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
@@ -21,9 +23,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                Surface(color = MaterialTheme.colors.background) {
-                    HomeScreen()
-                }
+                navController = rememberNavController()
+                SetupNavGraph(navController = navController)
             }
         }
     }
