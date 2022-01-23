@@ -16,8 +16,8 @@ class AuthViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
 ) : BaseViewModel() {
 
-    private val _loginState = MutableLiveData<AuthState?>(null)
-    val authState: LiveData<AuthState?> = _loginState
+    private val _authState = MutableLiveData<AuthState?>(null)
+    val authState: LiveData<AuthState?> = _authState
 
     fun login(phone: String, password: String) {
         viewModelScope.launch {
@@ -27,7 +27,7 @@ class AuthViewModel @Inject constructor(
 
             when (result) {
                 is Response.Success -> {
-                    _loginState.value = AuthState.Success
+                    _authState.value = AuthState.Success
                     Log.d("AuthFlow", "LoginViewModel Success: ${result.dataValue}")
                 }
                 is Response.Error -> {
@@ -35,11 +35,25 @@ class AuthViewModel @Inject constructor(
                 }
             }
             _loadingState.value = LoadingState.Hide
-            _loginState.value = null
+            _authState.value = null
+        }
+    }
+
+    fun authorize() {
+        viewModelScope.launch {
+            val result = authUseCases.authorize.get()
+            when (result) {
+                is Response.Success -> {
+                    _authState.value = AuthState.GetUser(result.dataValue)
+                }
+                is Response.Error -> {
+                    _errorState.value = result.errorValue
+                }
+            }
         }
     }
 
     override fun clear() {
-        _loginState.value = null
+        _authState.value = null
     }
 }

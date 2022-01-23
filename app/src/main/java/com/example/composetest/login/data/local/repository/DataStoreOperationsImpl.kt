@@ -33,7 +33,7 @@ class DataStoreOperationsImpl(context: Context) : DataStoreOperations {
         }
     }
 
-    override fun readSaveToken(): Flow<String> {
+    override fun readToken(): Flow<String?> {
         return dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
@@ -43,7 +43,13 @@ class DataStoreOperationsImpl(context: Context) : DataStoreOperations {
                 }
             }
             .map { preferences ->
-                preferences[PreferencesKey.token] ?: ""
+                preferences[PreferencesKey.token]
             }
+    }
+
+    override suspend fun clearToken() {
+        dataStore.edit { preferences ->
+            preferences.remove(PreferencesKey.token)
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.composetest.login.data.remote.api
 import com.example.composetest.login.data.remote.model.auth.UserAuthenticationResponse
 import com.example.composetest.login.data.remote.model.auth.*
 import com.example.composetest.login.data.remote.model.auth.PasswordResetResponse
+import com.example.composetest.login.domain.model.TokenDTO
 import com.example.composetest.login.util.Constants
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -14,7 +15,6 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
 
 
 class AuthApiImpl (httpClient: HttpClient, json: Json) : AuthApi {
@@ -23,12 +23,11 @@ class AuthApiImpl (httpClient: HttpClient, json: Json) : AuthApi {
     private val _json = json
 
 
-    override suspend fun userAuthenticationRequest(
+    override suspend fun login(
         contentType: kotlin.String?,
         body: UserAuthenticationRequest?
     ): UserAuthenticationResponse {
         val builder = HttpRequestBuilder()
-
 
         builder.method = HttpMethod.Post
         builder.url {
@@ -112,7 +111,7 @@ class AuthApiImpl (httpClient: HttpClient, json: Json) : AuthApi {
         builder.url {
             takeFrom(_basePath)
             encodedPath = encodedPath.let { startingPath ->
-                path("auth-api/v1/get-user/$userId")
+                path("get-user/$userId")
                 return@let startingPath + encodedPath.substring(1)
             }
         }
@@ -132,6 +131,7 @@ class AuthApiImpl (httpClient: HttpClient, json: Json) : AuthApi {
             throw pipeline.cause
         }
     }
+
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun jWTRefreshRequest(

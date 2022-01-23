@@ -1,6 +1,7 @@
 package com.example.composetest.login.data.remote.api
 
 import com.example.composetest.login.data.remote.model.auth.*
+import com.example.composetest.login.domain.model.TokenDTO
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -20,6 +21,7 @@ interface AuthApi {
         authorization: String? = null
     ): GetUserResponse
 
+
     suspend fun jWTRefreshRequest(
         contentType: String? = null,
         body: JWTRefreshRequest? = null
@@ -30,7 +32,7 @@ interface AuthApi {
         body: SendOTPRequest? = null
     ): SendOTPResponse
 
-    suspend fun userAuthenticationRequest(
+    suspend fun login(
         contentType: String? = null,
         bodyImpl: UserAuthenticationRequest? = null
     ): UserAuthenticationResponse?

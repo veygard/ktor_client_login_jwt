@@ -1,17 +1,20 @@
 package com.example.composetest.login.data.remote.repository
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewModelScope
 import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.data.remote.api.AuthApi
 import com.example.composetest.login.data.remote.model.auth.*
-import com.example.composetest.login.domain.model.Response
 import com.example.composetest.login.domain.repository.AuthRepository
 import com.example.composetest.login.data.remote.storage.TokenDTO
-import com.example.composetest.login.domain.model.Token
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import com.example.composetest.login.domain.model.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
 
+@DelicateCoroutinesApi
 internal class AuthRepositoryImpl(
     private val authApi: AuthApi,
     private val coroutineDispatcher: CoroutineDispatcher,
@@ -24,7 +27,7 @@ internal class AuthRepositoryImpl(
     ): Response<Token> = withContext(coroutineDispatcher) {
         try {
             Log.d("LoginViewModel", "AuthRepositoryImpl auth login started")
-            val response = authApi.userAuthenticationRequest(
+            val response = authApi.login(
                 bodyImpl = UserAuthenticationRequest(
                     mobile = phone,
                     password = password
@@ -38,6 +41,21 @@ internal class AuthRepositoryImpl(
         } catch (e: Throwable) {
             Log.d("LoginViewModel", "AuthRepositoryImpl auth exception message ${e.message}")
             Response.Error("exception message: ${e.message}" ?: "exception message null")
+        }
+    }
+
+    override suspend fun getUser(): Response<User> = withContext(coroutineDispatcher) {
+        try {
+            var jwt: String? = null
+            GlobalScope.launch(coroutineDispatcher) {
+                jwt = dataStore.readToken().stateIn(this).value
+            }
+            val userId = decodeUserId(jwt ?: "")
+            val response = authApi.getUserRequest(userId = userId ?: "", authorization = jwt)
+
+            Response.Success(response.toDomain())
+        } catch (e: Throwable) {
+            Response.Error("exception message: ${e.message}")
         }
     }
 

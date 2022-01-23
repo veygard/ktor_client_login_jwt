@@ -122,4 +122,6 @@ dependencies {
     implementation("dev.icerock.moko:mvvm-viewbinding:0.11.0") // api mvvm-livedata, ViewBinding support for Android
 
     implementation("androidx.datastore:datastore-preferences:1.0.0") //DataStore
+
+    implementation("com.auth0.android:jwtdecode:2.0.0")
 }

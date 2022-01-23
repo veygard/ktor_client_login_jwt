@@ -10,13 +10,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.composetest.login.data.local.repository.DataStoreOperationsImpl
 import com.example.composetest.login.presentation.viewmodel.auth.AuthViewModel
+import javax.inject.Inject
 
+@Inject
+lateinit var dataStoreOperationsImpl: DataStoreOperationsImpl
 
 @Composable
 fun HomeScreen(
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
 ) {
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
