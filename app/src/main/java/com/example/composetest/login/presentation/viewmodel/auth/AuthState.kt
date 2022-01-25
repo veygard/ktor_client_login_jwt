@@ -7,7 +7,8 @@ import com.example.composetest.login.domain.model.User
 sealed class AuthState {
     object Success : AuthState()
     data class Auth(val isSuccess: Boolean?) : AuthState()
-    data class GetUser(val user: User?) : AuthState()
+    data class GotUser(val user: User?) : AuthState()
+    data class NoUser(val error: String?) : AuthState()
     data class AuthResponse(val loginResponse: JWTRefreshResponse) : AuthState()
 
 }

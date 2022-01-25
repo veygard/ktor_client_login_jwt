@@ -49,6 +49,7 @@ internal class AuthRepositoryImpl(
     override suspend fun getUser(jwt: String?): Response<User> = withContext(coroutineDispatcher) {
         try {
             val userId = decodeUserId(jwt ?: "")
+            delay(500) //чтобы прогресс бар покрутился)
             val response = authApi.getUserRequest(userId = userId ?: "", authorization = jwt)
             Response.Success(response.toDomain())
         } catch (e: Throwable) {

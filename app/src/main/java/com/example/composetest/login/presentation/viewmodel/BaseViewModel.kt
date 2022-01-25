@@ -27,9 +27,11 @@ abstract class BaseViewModel : ViewModel() {
         get() = _failureState
 
 
+
     private val handleLoadingState: (LoadingState) -> Unit = { state ->
         when (state) {
             LoadingState.Show -> {
+
             }
             LoadingState.Hide -> {
             }

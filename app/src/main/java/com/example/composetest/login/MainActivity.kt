@@ -8,7 +8,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.composetest.login.navigation.SetupNavGraph
-import com.example.composetest.login.ui.theme.AppTheme
+import com.example.composetest.login.presentation.ui.theme.AppTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 

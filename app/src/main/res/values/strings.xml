@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">App_login_Otp</string>
+    <string name="home_screen_title">Главная</string>
+    <string name="home_screen_welcome_text">Авторизация прошла успешно!\nНомер пользователя: %1$d</string>
+    <string name="home_screen_not_authorized_text">К сожалению, данная страница доступна только авторизованым пользователям!</string>
+    <string name="home_screen_logout_button">Выйти из профиля</string>
+    <string name="home_screen_not_authorized_button">Авторизация</string>
+    <string name="something_wrong_title">Что то пошло не так</string>
+    <string name="something_wrong_text">Попробуйте повторить чуть позже, или свяжитесь с технической поддержкой.</string>
 </resources>

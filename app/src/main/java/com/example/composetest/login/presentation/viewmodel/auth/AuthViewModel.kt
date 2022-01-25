@@ -50,13 +50,19 @@ class AuthViewModel @Inject constructor(
             when (val result = authUseCases.getUser.get(jwt)) {
                 is Response.Success -> {
                     Log.d("getUser", "Response.Success")
-                    _authState.value = AuthState.GetUser(result.dataValue)
+                    _authState.value = AuthState.GotUser(result.dataValue)
                 }
                 is Response.Error -> {
                     Log.d("getUser", "Response.Error ")
-                    _errorState.value = result.errorValue
+                    _authState.value = AuthState.NoUser(result.errorValue)
                 }
             }
+        }
+    }
+
+    fun logout(){
+        viewModelScope.launch {
+            dataStore.clearToken()
         }
     }
 
