@@ -1,6 +1,7 @@
 package com.example.composetest.login.presentation.viewmodel.auth
 
 import android.util.Log
+import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.domain.model.Response
 import com.example.composetest.login.domain.use_cases.auth.AuthUseCases
 import com.example.composetest.login.presentation.viewmodel.BaseViewModel
@@ -8,12 +9,14 @@ import com.example.composetest.login.presentation.viewmodel.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authUseCases: AuthUseCases
+    private val authUseCases: AuthUseCases,
+    private val dataStore: DataStoreOperations
 ) : BaseViewModel() {
 
     private val _authState = MutableLiveData<AuthState?>(null)
@@ -41,12 +44,16 @@ class AuthViewModel @Inject constructor(
 
     fun getUser() {
         viewModelScope.launch {
-            val result = authUseCases.getUser.get()
-            when (result) {
+            Log.d("getUser", "started")
+            val jwt = dataStore.readToken().stateIn(this).value
+
+            when (val result = authUseCases.getUser.get(jwt)) {
                 is Response.Success -> {
+                    Log.d("getUser", "Response.Success")
                     _authState.value = AuthState.GetUser(result.dataValue)
                 }
                 is Response.Error -> {
+                    Log.d("getUser", "Response.Error ")
                     _errorState.value = result.errorValue
                 }
             }

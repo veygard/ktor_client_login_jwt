@@ -11,8 +11,10 @@ import com.example.composetest.login.domain.repository.AuthRepository
 import com.example.composetest.login.data.remote.storage.TokenDTO
 import com.example.composetest.login.domain.model.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
+import okhttp3.Dispatcher
 
 @DelicateCoroutinesApi
 internal class AuthRepositoryImpl(
@@ -44,15 +46,10 @@ internal class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun getUser(): Response<User> = withContext(coroutineDispatcher) {
+    override suspend fun getUser(jwt: String?): Response<User> = withContext(coroutineDispatcher) {
         try {
-            var jwt: String? = null
-            GlobalScope.launch(coroutineDispatcher) {
-                jwt = dataStore.readToken().stateIn(this).value
-            }
             val userId = decodeUserId(jwt ?: "")
             val response = authApi.getUserRequest(userId = userId ?: "", authorization = jwt)
-
             Response.Success(response.toDomain())
         } catch (e: Throwable) {
             Response.Error("exception message: ${e.message}")

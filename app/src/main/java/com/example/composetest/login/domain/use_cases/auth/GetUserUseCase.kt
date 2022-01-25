@@ -5,5 +5,5 @@ import com.example.composetest.login.domain.repository.AuthRepository
 class GetUserUseCase(
     private val authRepository: AuthRepository
 ) {
-    suspend fun get() = authRepository.getUser()
+    suspend fun get(jwt:String?) = authRepository.getUser(jwt)
 }

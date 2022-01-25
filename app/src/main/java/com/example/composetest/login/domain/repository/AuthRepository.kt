@@ -9,6 +9,6 @@ interface AuthRepository {
 
 
     suspend fun login(phone: String, password: String): Response<Token>
-    suspend fun getUser(): Response<User>
+    suspend fun getUser(jwt:String?): Response<User>
 
 }

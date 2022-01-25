@@ -49,7 +49,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center
     ) {
 
-        Button(onClick = { authViewModel.login("73333333333", "Qazxsw21") }) {
+        Button(onClick = { authViewModel.login("72222222222", "Qazxsw21") }) {
             Text(text = "Login")
         }
         Text(text = jwt.value?:"null")
