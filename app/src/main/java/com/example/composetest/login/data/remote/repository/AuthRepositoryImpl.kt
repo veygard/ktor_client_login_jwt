@@ -42,7 +42,7 @@ internal class AuthRepositoryImpl(
             Response.Success(tokenDTO.toDomain())
         } catch (e: Throwable) {
             Log.d("LoginViewModel", "AuthRepositoryImpl auth exception message ${e.message}")
-            Response.Error("exception message: ${e.message}" ?: "exception message null")
+            Response.Error("exception message: ${e.message}")
         }
     }
 

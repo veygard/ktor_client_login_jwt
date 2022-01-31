@@ -18,9 +18,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
+@DelicateCoroutinesApi
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthModule {

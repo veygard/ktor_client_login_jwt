@@ -9,7 +9,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
-import com.example.composetest.login.navigation.SetupNavGraph
+import com.example.composetest.login.navigation.AppNavigation
 import com.example.composetest.login.presentation.ui.theme.AppTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,9 +28,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-
                 navController = rememberNavController()
-                SetupNavGraph(navController = navController)
+                AppNavigation(navController= navController)
             }
         }
     }

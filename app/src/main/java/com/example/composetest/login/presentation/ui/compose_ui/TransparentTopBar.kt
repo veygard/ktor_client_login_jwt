@@ -29,14 +29,6 @@ fun TransparentTopBar(title: String, backIconsShow: Boolean = true, click: () ->
             }
         },
         modifier = Modifier
-            .clip(
-                RoundedCornerShape(
-                    topStart = 16.dp,
-                    topEnd = 16.dp,
-                    bottomEnd = 0.dp,
-                    bottomStart = 0.dp
-                )
-            )
             .height(36.dp),
         actions = {
             if (backIconsShow) {
