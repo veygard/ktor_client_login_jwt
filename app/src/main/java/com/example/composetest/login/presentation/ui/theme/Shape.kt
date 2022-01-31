@@ -15,3 +15,15 @@ val buttonShapes = Shapes(
     medium = RoundedCornerShape(13.dp),
     large = RoundedCornerShape(16.dp)
 )
+
+val inputFieldsShapes = Shapes(
+    small = RoundedCornerShape(4.dp),
+    medium = RoundedCornerShape(13.dp),
+    large = RoundedCornerShape(16.dp)
+)
+
+val roundShapes = Shapes(
+    small = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    medium = RoundedCornerShape(13.dp),
+    large = RoundedCornerShape(24.dp)
+)

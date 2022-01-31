@@ -1,6 +1,8 @@
 package com.example.composetest.login.presentation.ui.theme
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +52,16 @@ val buttonTextStyle = TextStyle(
     textAlign = TextAlign.Center
 )
 
+
+@Composable
+fun titleAuthTextStyle() = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.W400,
+    lineHeight = 20.sp,
+    textAlign = TextAlign.Start,
+    color =  MaterialTheme.colors.secondary
+)
+
 val Paragraph_16_Medium = TextStyle(
     fontFamily = FontFamily.Default,
     fontSize = 16.sp,
@@ -79,4 +91,13 @@ val Paragraph_16 = TextStyle(
     fontWeight = FontWeight.W400,
     lineHeight = 20.sp,
     textAlign = TextAlign.Start
+)
+
+@Composable
+fun onBackgroundTextStyle() = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.W500,
+    lineHeight = 20.sp,
+    textAlign = TextAlign.Start,
+    color = MaterialTheme.colors.onBackground
 )

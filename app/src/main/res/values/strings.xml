@@ -7,4 +7,41 @@
     <string name="home_screen_not_authorized_button">Авторизация</string>
     <string name="something_wrong_title">Что то пошло не так</string>
     <string name="something_wrong_text">Попробуйте повторить чуть позже, или свяжитесь с технической поддержкой.</string>
+    <string name="login_screen_title">Авторизация</string>
+
+    <string name="contentDescription_icon_phone">Телефонная трубка</string>
+
+    /*Авторизация*/
+    <string name="login_button_text">Войти</string>
+    <string name="sign_up_button_text">Зарегистрироваться</string>
+    <string name="enter_sms_title_text">На номер %1$s отправлен SMS c кодом подтверждения</string>
+    <string name="password_requirements_text_1">Только латиницы</string>
+    <string name="password_requirements_text_2">Более 8 символов</string>
+    <string name="password_requirements_text_3">Заглавные и прописные буквы</string>
+    <string name="password_requirements_text_4">Цифры</string>
+    <string name="enter_sms_page_top_bar_title">Введите код из SMS</string>
+    <string name="password_not_match_error_text">Пароли не совпадают</string>
+    <string name="authorization_error_dialog_title_text">Ошибка авторизации</string>
+    <string name="authorization_error_dialog_text">Вы ввели неправильный телефон или пароль. Попробуйте еще раз или воспользуйтесь восстановлением пароля</string>
+    <string name="authorization_sms_error_dialog_title_text">Ошибка авторизации по СМС</string>
+    <string name="authorization_sms_error_dialog_text">Вы ввели неправильный Код-СМС. Введите правильный код или сделайте новый запрос на отправку смс</string>
+    <string name="forgot_password_button_text">Забыли пароль?</string>
+    <string name="security_measures_title">Используйте следующие меры для безопасности аккаунта:</string>
+    <string name="home_tech_check_up_bottom_sheet_enter_auto_next">Далее</string>
+    <string name="sign_up_phone_form_TopBar_title">Зарегистрироваться</string>
+    <string name="next_screen_profile_list_button">Вход</string>
+    <string name="add_profile_text">Добавить аккаунт</string>
+    <string name="restore_pass_phone_form_TopBar_title">Восстановить пароль</string>
+    <string name="phone_num_text">Введите ваш номер</string>
+    <string name="countdown_send_sms_again_text">Отправить повторно через </string>
+    <string name="send_sms_again_text">Отправить SMS повторно</string>
+    <string name="write_password_text">Введите пароль</string>
+    <string name="write_again_password_text">Повторите пароль</string>
+    <string name="first_time_here_text">Впервые у нас ?</string>
+    <string name="next_screen_button_text">Далее</string>
+    <string name="save_button_text">Сохранить</string>
+    <string name="dialog_dismiss_button">Отмена</string>
+    <string name="dialog_confirm_button">Окей</string>
+    <string name="contentDescription_password">show_password</string>
+
 </resources>
