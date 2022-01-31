@@ -29,14 +29,17 @@ import com.example.composetest.login.presentation.ui.compose_ui.*
 import com.example.composetest.login.presentation.ui.theme.Margin
 import com.example.composetest.login.presentation.ui.theme.onBackgroundTextStyle
 import com.example.composetest.login.presentation.ui.theme.titleAuthTextStyle
+import com.example.composetest.login.presentation.viewmodel.auth.AuthState
 import com.example.composetest.login.presentation.viewmodel.auth.AuthViewModel
 import com.example.composetest.login.util.LocalStuff.getKeyBoardController
 import com.example.composetest.login.util.LocalStuff.getLocalFocusManager
 import com.example.composetest.login.util.SpacingVertical
+import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
+@Destination
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
@@ -46,6 +49,21 @@ fun LoginScreen(
 ) {
     val showErrorDialogState = remember {
         mutableStateOf(false)
+    }
+
+    authViewModel.authState.addObserver { result ->
+        when (result) {
+            is AuthState.Success -> {
+                authViewModel.loadingHide()
+                navigate(navController, Screens.Home)
+            }
+        }
+    }
+    authViewModel.errorState.addObserver { error ->
+        if(error != ""){
+            authViewModel.loadingHide()
+            showErrorDialogState.value = true
+        }
     }
 
     Scaffold(
@@ -60,6 +78,7 @@ fun LoginScreen(
     ) {
         LoginScreenContent(
             onEnterClick = { phone, password ->
+                authViewModel.loadingShow()
                 authViewModel.login(phone = phone, password = password)
             },
             routeToPhoneEnter = {flow->
@@ -78,10 +97,6 @@ fun LoginScreenContent(
     routeToPhoneEnter: (flow: AuthFlowEnum) -> Unit,
     showErrorDialogState: MutableState<Boolean>,
 ) {
-    //    если нужно будет свой диалог о ошибке
-    val showErrorDialogState = remember {
-        mutableStateOf(false)
-    }
 
     val focusManager = getLocalFocusManager().current
 
@@ -105,7 +120,7 @@ fun LoginScreenContent(
 
         SpacingVertical(heightDp = 44)
         Image(
-            painter = painterResource(id = R.drawable.ic_result),
+            painter = painterResource(id = R.drawable.ic_auth_logo),
             contentDescription = "Logo",
             alignment = Alignment.Center,
             modifier = Modifier

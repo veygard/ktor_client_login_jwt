@@ -2,13 +2,12 @@
     <string name="app_name">App_login_Otp</string>
     <string name="home_screen_title">Главная</string>
     <string name="home_screen_welcome_text">Авторизация прошла успешно!\nНомер пользователя: %1$d</string>
-    <string name="home_screen_not_authorized_text">К сожалению, данная страница доступна только авторизованым пользователям!</string>
+    <string name="home_screen_not_authorized_text">Для работы с приложением нужна авторизация</string>
     <string name="home_screen_logout_button">Выйти из профиля</string>
-    <string name="home_screen_not_authorized_button">Авторизация</string>
+    <string name="home_screen_not_authorized_button">Войти</string>
     <string name="something_wrong_title">Что то пошло не так</string>
     <string name="something_wrong_text">Попробуйте повторить чуть позже, или свяжитесь с технической поддержкой.</string>
     <string name="login_screen_title">Авторизация</string>
-
     <string name="contentDescription_icon_phone">Телефонная трубка</string>
 
     /*Авторизация*/
@@ -44,4 +43,9 @@
     <string name="dialog_confirm_button">Окей</string>
     <string name="contentDescription_password">show_password</string>
 
+    <!--Вввод номера-->
+    <string name="phone_enter_screen_change_password_error_title">Номер не зарегистрирован</string>
+    <string name="phone_enter_screen_change_password_error_text">Данный номер не найден в базе. Для восстановления пароля укажите корректный номер телефона</string>
+    <string name="phone_enter_screen_registration_error_title">Номер уже зарегистрирован</string>
+    <string name="phone_enter_screen_registration_error_text">Данный номер уже зарегистрирован. Для регистрации укажите номер, который еще не был зарегистрирован</string>
 </resources>

@@ -40,7 +40,6 @@ class AuthApiImpl (httpClient: HttpClient, json: Json) : AuthApi {
         @Suppress("SENSELESS_COMPARISON")
         if (body != null) {
             builder.body = TextContent(
-
                 _json.encodeToString(
                     UserAuthenticationRequest.serializer(),
                     body
@@ -241,7 +240,6 @@ class AuthApiImpl (httpClient: HttpClient, json: Json) : AuthApi {
         @Suppress("SENSELESS_COMPARISON")
         if (body != null) {
             builder.body = TextContent(
-
                 _json.encodeToString(
                     UserRegistrationRequest.serializer(),
 
