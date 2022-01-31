@@ -30,7 +30,7 @@
     <string name="sign_up_phone_form_TopBar_title">Зарегистрироваться</string>
     <string name="next_screen_profile_list_button">Вход</string>
     <string name="add_profile_text">Добавить аккаунт</string>
-    <string name="restore_pass_phone_form_TopBar_title">Восстановить пароль</string>
+    <string name="restore_pass_phone_form_TopBar_title">Сменить пароль</string>
     <string name="phone_num_text">Введите ваш номер</string>
     <string name="countdown_send_sms_again_text">Отправить повторно через </string>
     <string name="send_sms_again_text">Отправить SMS повторно</string>
