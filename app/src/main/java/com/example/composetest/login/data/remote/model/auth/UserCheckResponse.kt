@@ -6,14 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserCheckResponse (
-    
-    @SerialName("is_verified")
-    val isVerified: Boolean? = null,
-    
-    @SerialName("otp_resend_time")
-    val otpResendTime: String? = null
-
-) {
-
-}
-
+    @SerialName("isFound")
+    val isFound: Boolean? = null,
+    @SerialName("msg")
+    val msg: String? = null
+)

@@ -1,20 +1,14 @@
 package com.example.composetest.login.data.remote.repository
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.viewModelScope
 import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.data.remote.api.AuthApi
 import com.example.composetest.login.data.remote.model.auth.*
 import com.example.composetest.login.domain.repository.AuthRepository
 import com.example.composetest.login.data.remote.storage.TokenDTO
 import com.example.composetest.login.domain.model.*
+import com.example.composetest.login.navigation.AuthFlowEnum
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.stateIn
-import okhttp3.Dispatcher
 
 @DelicateCoroutinesApi
 internal class AuthRepositoryImpl(
@@ -42,6 +36,16 @@ internal class AuthRepositoryImpl(
             Response.Success(tokenDTO.toDomain())
         } catch (e: Throwable) {
             Log.d("LoginViewModel", "AuthRepositoryImpl auth exception message ${e.message}")
+            Response.Error("exception message: ${e.message}")
+        }
+    }
+
+    override suspend fun checkUser(phone: String): Response<Boolean>  = withContext(coroutineDispatcher) {
+        try {
+            val response = authApi.userCheckRequest(body = UserCheckRequest(phoneNum = phone))
+            Log.d("checkUser", "AuthRepositoryImpl, response.isFound: ${response.isFound ?: "null"}")
+            Response.Success(response.isFound!!)
+        }catch (e: Throwable) {
             Response.Error("exception message: ${e.message}")
         }
     }

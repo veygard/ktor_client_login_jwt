@@ -31,12 +31,11 @@ import com.example.composetest.login.util.SpacingVertical
 @Composable
 fun PhoneEnterScreenContent(
     openErrorDialogState: MutableState<Boolean>,
+    phoneNumber: MutableState<String>,
     errorTypeState: MutableState<PhoneEnterScreenErrorEnum>,
     nextButtonClickAction: ()->Unit
 ) {
-    val phoneNumber = remember {
-        mutableStateOf("7")
-    }
+
 
     val scrollState = rememberScrollState()
     Column(

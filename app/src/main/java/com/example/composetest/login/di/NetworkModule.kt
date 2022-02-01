@@ -4,11 +4,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.github.aakira.napier.Napier
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.logging.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
@@ -36,6 +38,16 @@ object NetworkModule {
                 serializer = KotlinxSerializer(provideJson())
             }
 
+            install(Logging) {
+                logger = object: Logger {
+                    override fun log(message: String) {
+                        logger("login_app", message)
+                        println("login_app: $message")
+                    }
+                }
+                level = LogLevel.ALL
+            }
+
             HttpResponseValidator {
                 validateResponse { response ->
                     val statusCode = response.status.value
@@ -52,4 +64,11 @@ object NetworkModule {
         }
     }
 
+}
+
+fun logger(tag: String, message: String) {
+    Napier.v(
+        tag = tag,
+        message = message
+    )
 }

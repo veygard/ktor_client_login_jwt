@@ -4,8 +4,8 @@ import android.util.Log
 import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.domain.model.Response
 import com.example.composetest.login.domain.use_cases.auth.AuthUseCases
+import com.example.composetest.login.navigation.AuthFlowEnum
 import com.example.composetest.login.presentation.viewmodel.BaseViewModel
-import com.example.composetest.login.presentation.viewmodel.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
@@ -37,8 +37,24 @@ class AuthViewModel @Inject constructor(
                     _errorState.value = result.errorValue
                 }
             }
-            _loadingState.value = LoadingState.Hide
-            _authState.value = null
+        }
+    }
+
+    fun checkUser(phone: String) {
+        viewModelScope.launch {
+            Log.d("checkUser", "started")
+            val result = authUseCases.checkUserUseCase.start(phone)
+
+            when (result) {
+                is Response.Success -> {
+                    Log.d("checkUser", "Response.Success")
+                    _authState.value = AuthState.CheckUser(result.dataValue)
+                }
+                is Response.Error -> {
+                    Log.d("checkUser", "Response.Error")
+                    _errorState.value = result.errorValue
+                }
+            }
         }
     }
 
@@ -47,7 +63,7 @@ class AuthViewModel @Inject constructor(
             Log.d("getUser", "started")
             val jwt = dataStore.readToken().stateIn(this).value
 
-            when (val result = authUseCases.getUser.get(jwt)) {
+            when (val result = authUseCases.getUser.start(jwt)) {
                 is Response.Success -> {
                     Log.d("getUser", "Response.Success")
                     _authState.value = AuthState.GotUser(result.dataValue)

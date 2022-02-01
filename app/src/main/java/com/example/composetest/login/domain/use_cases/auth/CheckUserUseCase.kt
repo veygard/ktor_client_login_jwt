@@ -1,9 +1,10 @@
 package com.example.composetest.login.domain.use_cases.auth
 
 import com.example.composetest.login.domain.repository.AuthRepository
+import com.example.composetest.login.navigation.AuthFlowEnum
 
-class GetUserUseCase(
+class CheckUserUseCase(
     private val authRepository: AuthRepository
 ) {
-    suspend fun start(jwt:String?) = authRepository.getUser(jwt)
+    suspend fun start(phone: String) = authRepository.checkUser(phone)
 }

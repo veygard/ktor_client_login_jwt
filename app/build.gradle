@@ -139,4 +139,6 @@ dependencies {
 
     implementation 'io.github.raamcosta.compose-destinations:core:1.2.1-beta'
     ksp 'io.github.raamcosta.compose-destinations:ksp:1.2.1-beta'
+
+    implementation 'io.github.aakira:napier:1.4.1'
 }
