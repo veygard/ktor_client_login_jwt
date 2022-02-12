@@ -8,7 +8,6 @@ import com.example.composetest.login.util.Constants
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.serialization.json.Json
@@ -21,36 +20,15 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
 
 
     override suspend fun login(
-        contentType: kotlin.String?,
-        body: UserAuthenticationRequest?
+        contentType: String?,
+        bodyImpl: UserAuthenticationRequest?
     ): UserAuthenticationResponse {
-        val builder = HttpRequestBuilder()
-
-        builder.method = HttpMethod.Post
-        builder.url {
-            takeFrom(_basePath)
-            encodedPath = encodedPath.let { startingPath ->
-                path("/login")
-                return@let startingPath + encodedPath.substring(1)
+        return try {
+            _httpClient.post {
+                url("$_basePath/login")
+                contentType(ContentType.Application.Json)
+                body = bodyImpl!!
             }
-        }
-        @Suppress("SENSELESS_COMPARISON")
-        if (body != null) {
-            builder.body = TextContent(
-                _json.encodeToString(
-                    UserAuthenticationRequest.serializer(),
-                    body
-                ),
-                ContentType.Application.Json.withoutParameters()
-            )
-        }
-
-        try {
-            val serializer = UserAuthenticationResponse.serializer()
-
-            //not primitive type
-            val result: String = _httpClient.request(builder)
-            return _json.decodeFromString(serializer, result)
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
         }
@@ -63,7 +41,7 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     ): UserCheckResponse {
         return try {
             Log.d("checkUser", "Api, start. body: ${body?.phoneNum}, path: $_basePath/check-user")
-            _httpClient.post<UserCheckResponse> {
+            _httpClient.post {
                 url("$_basePath/check-user")
                 contentType(ContentType.Application.Json)
                 this.body = body!!
@@ -121,30 +99,15 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
         contentType: String?,
         authorization: String?
     ): GetUserResponse {
-        val builder = HttpRequestBuilder()
 
-        builder.method = HttpMethod.Get
-
-
-        builder.url {
-            takeFrom(_basePath)
-            encodedPath = encodedPath.let { startingPath ->
-                path("get-user/$userId")
-                return@let startingPath + encodedPath.substring(1)
+        return try {
+            _httpClient.get {
+                url("$_basePath/get-user/$userId")
+                contentType(ContentType.Application.Json)
+                headers{
+                    append("Authorization", "Bearer $authorization")
+                }
             }
-        }
-
-        with(builder.headers) {
-            append("Accept", "application/json")
-            append("Authorization", "Bearer $authorization")
-        }
-
-        try {
-            val serializer = GetUserResponse.serializer()
-
-            //not primitive type
-            val result: String = _httpClient.request(builder)
-            return _json.decodeFromString(serializer, result)
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
         }
