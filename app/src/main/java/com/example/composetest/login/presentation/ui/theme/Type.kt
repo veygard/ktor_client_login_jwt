@@ -28,6 +28,26 @@ val Typography = Typography(
     )
 )
 
+@Composable
+fun passwordRequirementsTextStyle() = TextStyle(
+    fontSize = 12.sp,
+    fontWeight = FontWeight.W400,
+    lineHeight = 16.sp,
+    textAlign = TextAlign.Start,
+    color = MaterialTheme.colors.onSurface
+)
+
+
+@Composable
+fun securityMeasuresTitleStyle() = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.W400,
+    lineHeight = 20.sp,
+    textAlign = TextAlign.Start,
+    color =  MaterialTheme.colors.onSurface
+)
+
+
 val bottomBarTextStyle = TextStyle(
     fontFamily = FontFamily.Default,
     fontSize = 12.sp,
