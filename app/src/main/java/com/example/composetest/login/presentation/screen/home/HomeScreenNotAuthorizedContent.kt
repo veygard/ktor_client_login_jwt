@@ -17,7 +17,7 @@ import com.example.composetest.login.presentation.ui.theme.Margin
 import com.example.composetest.login.util.SpacingVertical
 
 @Composable
-fun HomeScreenNotAuthorizedContent(
+internal fun HomeScreenNotAuthorizedContent(
     loginClick: () -> Unit
 ) {
     Column(

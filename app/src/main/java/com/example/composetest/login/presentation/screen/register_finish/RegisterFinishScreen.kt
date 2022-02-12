@@ -43,7 +43,7 @@ import kotlin.math.roundToInt
 @ExperimentalMaterialApi
 @Composable
 @Destination
-fun RegisterFinishScreen(
+internal fun RegisterFinishScreen(
     navigator: DestinationsNavigator,
     flow: AuthFlowEnum,
     authViewModel: AuthViewModel = hiltViewModel(),

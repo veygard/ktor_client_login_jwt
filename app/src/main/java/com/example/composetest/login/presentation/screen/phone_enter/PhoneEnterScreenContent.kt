@@ -29,7 +29,7 @@ import com.example.composetest.login.util.SpacingVertical
 
 @ExperimentalComposeUiApi
 @Composable
-fun PhoneEnterScreenContent(
+internal fun PhoneEnterScreenContent(
     openErrorDialogState: MutableState<Boolean>,
     phoneNumber: MutableState<String>,
     errorTypeState: MutableState<PhoneEnterScreenErrorEnum>,

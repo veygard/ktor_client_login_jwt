@@ -35,7 +35,7 @@ import kotlin.math.roundToInt
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
-fun LoginScreenContent(
+internal fun LoginScreenContent(
     onEnterClick: (phone: String, password: String) -> Unit,
     routeToPhoneEnter: (flow: AuthFlowEnum) -> Unit,
     showErrorDialogState: MutableState<Boolean>,
