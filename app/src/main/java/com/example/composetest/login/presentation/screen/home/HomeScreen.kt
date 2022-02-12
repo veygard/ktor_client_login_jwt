@@ -62,6 +62,7 @@ fun HomeScreen(
             }
         }
     }
+
     ScaffoldElement(
         modifier = Modifier,
         topBarShow = true,

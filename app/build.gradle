@@ -141,4 +141,6 @@ dependencies {
     ksp 'io.github.raamcosta.compose-destinations:ksp:1.2.1-beta'
 
     implementation 'io.github.aakira:napier:1.4.1'
+
+    implementation("com.redmadrobot:input-mask-android:6.0.0") //Phone Mask
 }
