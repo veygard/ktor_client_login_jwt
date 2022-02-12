@@ -83,7 +83,7 @@ fun PhoneEnterScreenContent(
             val title = when (errorTypeState.value) {
                 PhoneEnterScreenErrorEnum.RegistrationError -> stringResource(id = R.string.phone_enter_screen_registration_error_title)
                 PhoneEnterScreenErrorEnum.ChangePassError -> stringResource(id = R.string.phone_enter_screen_change_password_error_title)
-                PhoneEnterScreenErrorEnum.Else -> stringResource(id = R.string.something_wrong_text)
+                PhoneEnterScreenErrorEnum.Else -> stringResource(id = R.string.something_wrong_tile)
             }
             val text = when (errorTypeState.value) {
                 PhoneEnterScreenErrorEnum.RegistrationError -> stringResource(id = R.string.phone_enter_screen_registration_error_text)

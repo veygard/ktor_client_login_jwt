@@ -38,7 +38,7 @@ fun PhoneEnterScreen(
     val phoneNumber = remember {
         mutableStateOf("7")
     }
-    observeData(authViewModel, navigator, openErrorDialogState, authFlow)
+    observeData(authViewModel, navigator, openErrorDialogState, authFlow, errorTypeState)
     Scaffold(
         topBar = {
             TransparentTopBar(
@@ -70,6 +70,7 @@ private fun observeData(
     navigator: DestinationsNavigator,
     openErrorDialogState: MutableState<Boolean>,
     flow: AuthFlowEnum,
+    errorTypeState: MutableState<PhoneEnterScreenErrorEnum>,
 ) {
 
     authViewModel.authState.addObserver { result ->
@@ -81,10 +82,12 @@ private fun observeData(
                         navigator.navigate(RegisterFinishScreenDestination(flow))
                     }
                     result.isFound == false && flow == AuthFlowEnum.ChangePassword -> {
+                        errorTypeState.value = PhoneEnterScreenErrorEnum.ChangePassError
                         openErrorDialogState.value = true
                     }
 
                     result.isFound == true && flow == AuthFlowEnum.Registration -> {
+                        errorTypeState.value = PhoneEnterScreenErrorEnum.RegistrationError
                         openErrorDialogState.value = true
                     }
 
