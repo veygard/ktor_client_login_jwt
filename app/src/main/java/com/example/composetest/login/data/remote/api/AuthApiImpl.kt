@@ -74,40 +74,6 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
         }
     }
 
-//    @Suppress("UNCHECKED_CAST")
-//    override suspend fun userCheckRequest(
-//        contentType: String?,
-//        body: UserCheckRequest?
-//    ): UserCheckResponse {
-//        val builder = HttpRequestBuilder()
-//
-//        builder.method = HttpMethod.Post
-//        builder.url {
-//            takeFrom(_basePath)
-//            encodedPath = encodedPath.let { startingPath ->
-//                path("/check-user")
-//                return@let startingPath + encodedPath.substring(1)
-//            }
-//        }
-//        @Suppress("SENSELESS_COMPARISON")
-//        if (body != null) {
-//            builder.body = TextContent(
-//                _json.encodeToString(
-//                    UserCheckRequest.serializer(),
-//                    body
-//                ),
-//                ContentType.Application.Json.withoutParameters()
-//            )
-//        }
-//
-//        try {
-//            val serializer = UserCheckResponse.serializer()
-//            val result: String = _httpClient.request(builder)
-//            return _json.decodeFromString(serializer, result)
-//        } catch (pipeline: ReceivePipelineException) {
-//            throw pipeline.cause
-//        }
-//    }
 
 
     @Suppress("UNCHECKED_CAST")
@@ -175,50 +141,6 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
 
         try {
             val serializer = GetUserResponse.serializer()
-
-            //not primitive type
-            val result: String = _httpClient.request(builder)
-            return _json.decodeFromString(serializer, result)
-        } catch (pipeline: ReceivePipelineException) {
-            throw pipeline.cause
-        }
-    }
-
-
-    @Suppress("UNCHECKED_CAST")
-    override suspend fun jWTRefreshRequest(
-        contentType: String?,
-        body: JWTRefreshRequest?
-    ): JWTRefreshResponse {
-        val builder = HttpRequestBuilder()
-
-        builder.method = HttpMethod.Post
-        builder.url {
-            takeFrom(_basePath)
-            encodedPath = encodedPath.let { startingPath ->
-                path("auth-api/v1/jwt-refresh")
-                return@let startingPath + encodedPath.substring(1)
-            }
-        }
-        @Suppress("SENSELESS_COMPARISON")
-        if (body != null) {
-            builder.body = TextContent(
-
-                _json.encodeToString(
-                    JWTRefreshRequest.serializer(),
-
-                    body
-                ),
-                ContentType.Application.Json.withoutParameters()
-            )
-        }
-
-        with(builder.headers) {
-            append("Accept", "application/json")
-        }
-
-        try {
-            val serializer = JWTRefreshResponse.serializer()
 
             //not primitive type
             val result: String = _httpClient.request(builder)

@@ -22,11 +22,6 @@ interface AuthApi {
     ): GetUserResponse
 
 
-    suspend fun jWTRefreshRequest(
-        contentType: String? = null,
-        body: JWTRefreshRequest? = null
-    ): JWTRefreshResponse
-
     suspend fun sendOTPRequest(
         contentType: String? = null,
         body: SendOTPRequest? = null
@@ -43,7 +38,7 @@ interface AuthApi {
         body: UserRegistrationRequest? = null
     ): UserRegistrationResponse
 
-    suspend fun userCheckRequest(contentType: kotlin.String? = null, body: UserCheckRequest? = null) : UserCheckResponse
+    suspend fun userCheckRequest(contentType: String? = null, body: UserCheckRequest? = null) : UserCheckResponse
 
     suspend fun passwordResetRequest(
         contentType: kotlin.String? = null,
