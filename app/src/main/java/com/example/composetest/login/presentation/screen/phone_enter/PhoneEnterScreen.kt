@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.composetest.login.R
 import com.example.composetest.login.navigation.AuthFlowEnum
 import com.example.composetest.login.presentation.screen.destinations.LoginScreenDestination
+import com.example.composetest.login.presentation.screen.destinations.OtpScreenDestination
 import com.example.composetest.login.presentation.screen.destinations.RegisterFinishScreenDestination
 import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
 import com.example.composetest.login.presentation.viewmodel.auth.AuthState
@@ -38,7 +39,27 @@ fun PhoneEnterScreen(
     val phoneNumber = remember {
         mutableStateOf("7")
     }
-    observeData(authViewModel, navigator, openErrorDialogState, authFlow, errorTypeState)
+
+    observeData(
+        authViewModel = authViewModel,
+        chekUserResultAction = { isFound ->
+            chekUserResultAction(
+                isFound = isFound,
+                authFlow,
+                navigator,
+                errorTypeState,
+                openErrorDialogState,
+                phoneNumber
+            )
+        },
+        errorAction = {
+            authViewModel.loadingHide()
+            errorTypeState.value = PhoneEnterScreenErrorEnum.Else
+            openErrorDialogState.value = true
+        }
+
+    )
+
     Scaffold(
         topBar = {
             TransparentTopBar(
@@ -56,7 +77,7 @@ fun PhoneEnterScreen(
             openErrorDialogState,
             phoneNumber,
             errorTypeState,
-            nextButtonClickAction={
+            nextButtonClickAction = {
                 authViewModel.checkUser(phoneNumber.value)
             }
         )
@@ -65,44 +86,54 @@ fun PhoneEnterScreen(
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
+private fun chekUserResultAction(
+    isFound: Boolean?,
+    flow: AuthFlowEnum,
+    navigator: DestinationsNavigator,
+    errorTypeState: MutableState<PhoneEnterScreenErrorEnum>,
+    openErrorDialogState: MutableState<Boolean>,
+    phoneNumber: MutableState<String>,
+) {
+    when {
+        isFound == true && flow == AuthFlowEnum.ChangePassword -> {
+            navigator.navigate(OtpScreenDestination(flow, phoneNumber.value))
+        }
+        isFound == false && flow == AuthFlowEnum.ChangePassword -> {
+            errorTypeState.value = PhoneEnterScreenErrorEnum.ChangePassError
+            openErrorDialogState.value = true
+        }
+
+        isFound == true && flow == AuthFlowEnum.Registration -> {
+            errorTypeState.value = PhoneEnterScreenErrorEnum.RegistrationError
+            openErrorDialogState.value = true
+        }
+
+        isFound == false && flow == AuthFlowEnum.Registration -> {
+            navigator.navigate(OtpScreenDestination(flow, phoneNumber.value))
+        }
+    }
+
+}
+
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
 private fun observeData(
     authViewModel: AuthViewModel,
-    navigator: DestinationsNavigator,
-    openErrorDialogState: MutableState<Boolean>,
-    flow: AuthFlowEnum,
-    errorTypeState: MutableState<PhoneEnterScreenErrorEnum>,
+    chekUserResultAction: (isFound: Boolean?) -> Unit,
+    errorAction: () -> Unit,
 ) {
-
     authViewModel.authState.addObserver { result ->
         when (result) {
             is AuthState.CheckUser -> {
-                Log.d("checkUser", "observeData, flow is: $flow, result is: ${result.isFound}")
-                when{
-                    result.isFound == true && flow == AuthFlowEnum.ChangePassword -> {
-                        navigator.navigate(RegisterFinishScreenDestination(flow))
-                    }
-                    result.isFound == false && flow == AuthFlowEnum.ChangePassword -> {
-                        errorTypeState.value = PhoneEnterScreenErrorEnum.ChangePassError
-                        openErrorDialogState.value = true
-                    }
-
-                    result.isFound == true && flow == AuthFlowEnum.Registration -> {
-                        errorTypeState.value = PhoneEnterScreenErrorEnum.RegistrationError
-                        openErrorDialogState.value = true
-                    }
-
-                    result.isFound == false && flow == AuthFlowEnum.Registration -> {
-                        navigator.navigate(RegisterFinishScreenDestination(flow))
-                    }
-                }
+                Log.d("checkUser", "observeData, CheckUser result is: ${result.isFound}")
+                chekUserResultAction(result.isFound)
             }
         }
     }
     authViewModel.errorState.addObserver { error ->
-        if(error != ""){
+        if (error != "") {
             Log.d("checkUser", "observeData, error")
-            authViewModel.loadingHide()
-            openErrorDialogState.value = true
+            errorAction()
         }
     }
 }
