@@ -1,19 +1,9 @@
 package com.example.composetest.login.data.remote.api
 
 import com.example.composetest.login.data.remote.model.auth.*
-import com.example.composetest.login.domain.model.TokenDTO
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.http.content.*
 
 interface AuthApi {
 
-    suspend fun authorizeOTPRequest(
-        contentType: String? = null,
-        body: AuthorizeOTPRequest? = null
-    ): AuthorizeOTPResponse
 
     suspend fun getUserRequest(
         userId: String,
@@ -25,7 +15,12 @@ interface AuthApi {
     suspend fun sendOTPRequest(
         contentType: String? = null,
         body: SendOTPRequest? = null
-    ): SendOTPResponse
+    ): SendOTPResponseDTO
+
+    suspend fun checkOTPRequest(
+        contentType: String? = null,
+        body: CheckOTPRequest? = null
+    ): CheckOTPResponseDTO
 
     suspend fun login(
         contentType: String? = null,

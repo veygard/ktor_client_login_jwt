@@ -72,7 +72,7 @@ internal fun OtpScreenContent(
                     start = Margin.horizontalStandard,
                     end = Margin.horizontalStandard
                 ),
-                smsCodeLength = 4,
+                smsCodeLength = 5,
                 whenFull = {
                     otpCodeIsEntered(it, openErrorDialogState)
                 },

@@ -76,6 +76,33 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun sendOtp(phoneNum:String){
+        viewModelScope.launch {
+            when(val result = authUseCases.sendOtpUseCase.start(phoneNum)){
+                is Response.Success -> {
+                    _authState.value = AuthState.SendOtp(result.dataValue)
+                }
+                is Response.Error -> {
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
+
+    fun checkOtp(phoneNum:String, otp:String){
+        viewModelScope.launch {
+            when(val result = authUseCases.checkOtpUseCase.start(phoneNum, otp)){
+                is Response.Success -> {
+                    _authState.value = AuthState.CheckOtp(result.dataValue)
+                }
+                is Response.Error -> {
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
+
+
     fun logout(){
         viewModelScope.launch {
             dataStore.clearToken()

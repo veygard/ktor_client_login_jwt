@@ -6,8 +6,9 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class SendOTPRequest (
+data class CheckOTPRequest (
     @SerialName("phoneNum")
-    val phoneNum: kotlin.String? = null
+    val phoneNum: kotlin.String? = null,
+    @SerialName("otpCode")
+    val otpCode: kotlin.String? = null
 )
-

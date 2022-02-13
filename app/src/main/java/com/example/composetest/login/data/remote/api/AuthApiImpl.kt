@@ -21,13 +21,13 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
 
     override suspend fun login(
         contentType: String?,
-        bodyImpl: UserAuthenticationRequest?
+        userAuthenticationRequest: UserAuthenticationRequest?
     ): UserAuthenticationResponse {
         return try {
             _httpClient.post {
                 url("$_basePath/login")
                 contentType(ContentType.Application.Json)
-                body = bodyImpl!!
+                body = userAuthenticationRequest!!
             }
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
@@ -37,61 +37,23 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
 
     override suspend fun userCheckRequest(
         contentType: String?,
-        body: UserCheckRequest?
+        userCheckRequest: UserCheckRequest?
     ): UserCheckResponse {
         return try {
-            Log.d("checkUser", "Api, start. body: ${body?.phoneNum}, path: $_basePath/check-user")
+            Log.d("checkUser", "Api, start. body: ${userCheckRequest?.phoneNum}, path: $_basePath/check-user")
             _httpClient.post {
                 url("$_basePath/check-user")
                 contentType(ContentType.Application.Json)
-                this.body = body!!
+                this.body = userCheckRequest!!
             }
         } catch (pipeline: ReceivePipelineException) {
-            Log.d("checkUser", "Api, error: ${body?.phoneNum}")
+            Log.d("checkUser", "Api, error: ${userCheckRequest?.phoneNum}")
             throw pipeline.cause
         }
     }
 
 
 
-    @Suppress("UNCHECKED_CAST")
-    override suspend fun authorizeOTPRequest(
-        contentType: String?,
-        body: AuthorizeOTPRequest?
-    ): AuthorizeOTPResponse {
-        val builder = HttpRequestBuilder()
-
-
-        builder.method = HttpMethod.Post
-        builder.url {
-            takeFrom(_basePath)
-            encodedPath = encodedPath.let { startingPath ->
-                path("/login")
-                return@let startingPath + encodedPath.substring(1)
-            }
-        }
-        @Suppress("SENSELESS_COMPARISON")
-        if (body != null) {
-            builder.body = TextContent(
-
-                _json.encodeToString(
-                    AuthorizeOTPRequest.serializer(),
-                    body
-                ),
-                ContentType.Application.Json.withoutParameters()
-            )
-        }
-
-        try {
-            val serializer = AuthorizeOTPResponse.serializer()
-
-            //not primitive type
-            val result: String = _httpClient.request(builder)
-            return _json.decodeFromString(serializer, result)
-        } catch (pipeline: ReceivePipelineException) {
-            throw pipeline.cause
-        }
-    }
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun getUserRequest(
@@ -117,40 +79,32 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     @Suppress("UNCHECKED_CAST")
     override suspend fun sendOTPRequest(
         contentType: String?,
-        body: SendOTPRequest?
-    ): SendOTPResponse {
-        val builder = HttpRequestBuilder()
+        sendOTPRequest: SendOTPRequest?
+    ): SendOTPResponseDTO {
 
-        builder.method = HttpMethod.Post
-        builder.url {
-            takeFrom(_basePath)
-            encodedPath = encodedPath.let { startingPath ->
-                path("auth-api/v1/send-otp")
-                return@let startingPath + encodedPath.substring(1)
+        return try {
+            _httpClient.post() {
+                url("$_basePath/send_otp")
+                contentType(ContentType.Application.Json)
+                body= sendOTPRequest!!
             }
+        } catch (pipeline: ReceivePipelineException) {
+            throw pipeline.cause
         }
-        @Suppress("SENSELESS_COMPARISON")
-        if (body != null) {
-            builder.body = TextContent(
+    }
 
-                _json.encodeToString(
-                    SendOTPRequest.serializer(),
-                    body
-                ),
-                ContentType.Application.Json.withoutParameters()
-            )
-        }
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun checkOTPRequest(
+        contentType: String?,
+        checkOTPRequest: CheckOTPRequest?
+    ): CheckOTPResponseDTO {
 
-        with(builder.headers) {
-            append("Accept", "application/json")
-        }
-
-        try {
-            val serializer = SendOTPResponse.serializer()
-
-            //not primitive type
-            val result: String = _httpClient.request(builder)
-            return _json.decodeFromString(serializer, result)
+        return try {
+            _httpClient.get {
+                url("$_basePath/check_otp")
+                contentType(ContentType.Application.Json)
+                body= checkOTPRequest!!
+            }
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
         }

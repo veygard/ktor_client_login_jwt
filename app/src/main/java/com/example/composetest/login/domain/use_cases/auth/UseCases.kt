@@ -5,4 +5,6 @@ data class AuthUseCases(
     val loginUseCase: LoginUseCase,
     val getUser: GetUserUseCase,
     val checkUserUseCase: CheckUserUseCase,
+    val sendOtpUseCase: SendOtpUseCase,
+    val checkOtpUseCase: CheckOtpUseCase
 )

@@ -7,6 +7,8 @@ import com.example.composetest.login.data.remote.model.auth.*
 import com.example.composetest.login.domain.repository.AuthRepository
 import com.example.composetest.login.data.remote.storage.TokenDTO
 import com.example.composetest.login.domain.model.*
+import com.example.composetest.login.domain.model.auth.CheckOTPResponse
+import com.example.composetest.login.domain.model.auth.SendOTPResponse
 import com.example.composetest.login.navigation.AuthFlowEnum
 import kotlinx.coroutines.*
 
@@ -40,15 +42,19 @@ internal class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun checkUser(phone: String): Response<Boolean>  = withContext(coroutineDispatcher) {
-        try {
-            val response = authApi.userCheckRequest(body = UserCheckRequest(phoneNum = phone))
-            Log.d("checkUser", "AuthRepositoryImpl, response.isFound: ${response.isFound ?: "null"}")
-            Response.Success(response.isFound!!)
-        }catch (e: Throwable) {
-            Response.Error("exception message: ${e.message}")
+    override suspend fun checkUser(phone: String): Response<Boolean> =
+        withContext(coroutineDispatcher) {
+            try {
+                val response = authApi.userCheckRequest(body = UserCheckRequest(phoneNum = phone))
+                Log.d(
+                    "checkUser",
+                    "AuthRepositoryImpl, response.isFound: ${response.isFound ?: "null"}"
+                )
+                Response.Success(response.isFound!!)
+            } catch (e: Throwable) {
+                Response.Error("exception message: ${e.message}")
+            }
         }
-    }
 
     override suspend fun getUser(jwt: String?): Response<User> = withContext(coroutineDispatcher) {
         try {
@@ -61,4 +67,23 @@ internal class AuthRepositoryImpl(
         }
     }
 
+    override suspend fun sendOtp(phoneNum: String): Response<SendOTPResponse> =
+        withContext(coroutineDispatcher) {
+            try {
+                val response = authApi.sendOTPRequest(body = SendOTPRequest(phoneNum = phoneNum))
+                Response.Success(response.toDomain())
+            } catch (e: Throwable) {
+                Response.Error("exception message: ${e.message}")
+            }
+        }
+
+    override suspend fun checkOtp(phoneNum: String, otp: String): Response<CheckOTPResponse> =
+        withContext(coroutineDispatcher) {
+            try {
+                val response = authApi.checkOTPRequest(body = CheckOTPRequest(phoneNum, otp))
+                Response.Success(response.toDomain())
+            } catch (e: Throwable) {
+                Response.Error("exception message: ${e.message}")
+            }
+        }
 }

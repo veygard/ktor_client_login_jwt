@@ -8,10 +8,7 @@ import com.example.composetest.login.data.remote.repository.AuthRepositoryImpl
 import com.example.composetest.login.di.DataOperations.provideDataStoreOperations
 import com.example.composetest.login.di.NetworkModule.provideHttpClient
 import com.example.composetest.login.domain.repository.AuthRepository
-import com.example.composetest.login.domain.use_cases.auth.LoginUseCase
-import com.example.composetest.login.domain.use_cases.auth.AuthUseCases
-import com.example.composetest.login.domain.use_cases.auth.CheckUserUseCase
-import com.example.composetest.login.domain.use_cases.auth.GetUserUseCase
+import com.example.composetest.login.domain.use_cases.auth.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,7 +48,9 @@ object AuthModule {
         return AuthUseCases(
             loginUseCase = LoginUseCase(authRepository = authRepository),
             getUser =  GetUserUseCase(authRepository = authRepository),
-            checkUserUseCase = CheckUserUseCase(authRepository = authRepository)
+            checkUserUseCase = CheckUserUseCase(authRepository = authRepository),
+            sendOtpUseCase = SendOtpUseCase(authRepository = authRepository),
+            checkOtpUseCase = CheckOtpUseCase(authRepository = authRepository)
         )
     }
 
