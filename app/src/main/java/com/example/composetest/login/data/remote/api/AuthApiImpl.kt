@@ -119,12 +119,9 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     ): UserRegistrationResponse {
         return try {
             _httpClient.post {
-                url("$_basePath/check_otp")
+                url("$_basePath/createUser")
                 contentType(ContentType.Application.Json)
                 body= userRegistration!!
-                headers{
-                    append("Authorization", "Bearer $authorization")
-                }
             }
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause

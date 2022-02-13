@@ -118,4 +118,6 @@
     <string name="contentDescription_star_icon">Звездочка</string>
     <string name="contentDescription_thumbs_down">Палец вниз</string>
     <string name="next_title">Далее</string>
+    <string name="user_was_registred">Пользователь зарегистрирован</string>
+    <string name="password_was_changed">Пароль изменен</string>
 </resources>

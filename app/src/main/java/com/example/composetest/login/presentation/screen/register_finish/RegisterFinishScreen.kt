@@ -1,14 +1,12 @@
 package com.example.composetest.login.presentation.screen.register_finish
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -17,6 +15,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -30,11 +29,13 @@ import com.example.composetest.login.presentation.ui.compose_ui.CommonButton
 import com.example.composetest.login.presentation.ui.compose_ui.PasswordInputField
 import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
 import com.example.composetest.login.presentation.ui.theme.*
+import com.example.composetest.login.presentation.viewmodel.auth.AuthState
 import com.example.composetest.login.presentation.viewmodel.auth.AuthViewModel
 import com.example.composetest.login.util.LocalStuff.getLocalFocusManager
 import com.example.composetest.login.util.SpacingVertical
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -51,7 +52,21 @@ internal fun RegisterFinishScreen(
 ) {
     val authStateCompose by authViewModel.authStateCompose.collectAsState()
 
+    val scaffold = rememberScaffoldState()
+    val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    observeData(
+        authStateCompose,
+        successAction = { text->
+            successAction(navigator, scaffold, coroutine, text)
+        },
+        context
+    )
+
+
     Scaffold(
+        scaffoldState = scaffold,
         topBar = {
             TransparentTopBar(
                 when (flow) {
@@ -67,8 +82,46 @@ internal fun RegisterFinishScreen(
         CircleProgressBar(authViewModel.loadingState)
         RegisterFinishScreenContent(
             saveButtonAction = {
-
+                saveAction(flow, it, phoneNumber, authViewModel)
             }
+        )
+    }
+}
+
+@ExperimentalComposeUiApi
+@ExperimentalMaterialApi
+fun successAction(
+    navigator: DestinationsNavigator,
+    scaffold: ScaffoldState,
+    coroutine: CoroutineScope,
+    text: String
+) {
+    coroutine.launch {
+        scaffold.snackbarHostState.showSnackbar(text, duration = SnackbarDuration.Short)
+        navigator.navigate(LoginScreenDestination)
+    }
+}
+
+@ExperimentalComposeUiApi
+@ExperimentalMaterialApi
+private fun observeData(authStateCompose: AuthState?, successAction: (text:String) -> Unit, context: Context) {
+    when (authStateCompose) {
+        is AuthState.ChangePass -> successAction(context.getString(R.string.password_was_changed))
+        is AuthState.UserCreate -> successAction(context.getString(R.string.user_was_registred))
+    }
+}
+
+private fun saveAction(
+    flow: AuthFlowEnum,
+    password: String,
+    phoneNumber: String,
+    authViewModel: AuthViewModel
+) {
+    when (flow) {
+        AuthFlowEnum.ChangePassword -> authViewModel.changePass(password)
+        AuthFlowEnum.Registration -> authViewModel.registration(
+            password = password,
+            phoneNum = phoneNumber
         )
     }
 }
@@ -206,6 +259,7 @@ fun RegisterFinishScreenContent(
         SpacingVertical(heightDp = 8)
         PasswordInputField(
             passwordValue = enteredNewPasswordRepeat,
+            passwordRepeatValue= enteredNewPassword,
             checkSecondPassword = true,
             changingTitleString = enterAgainPassTitleState,
             originalTitle = enterAgainPassTitle,
