@@ -46,7 +46,9 @@ object AuthModule {
             getUser =  GetUserUseCase(authRepository = authRepository),
             checkUserUseCase = CheckUserUseCase(authRepository = authRepository),
             sendOtpUseCase = SendOtpUseCase(authRepository = authRepository),
-            checkOtpUseCase = CheckOtpUseCase(authRepository = authRepository)
+            checkOtpUseCase = CheckOtpUseCase(authRepository = authRepository),
+            createUserUseCase = CreateUserUseCase(authRepository),
+            changePasswordUseCase = ChangePasswordUseCase(authRepository)
         )
     }
 

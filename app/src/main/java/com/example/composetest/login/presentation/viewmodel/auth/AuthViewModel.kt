@@ -118,7 +118,33 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun registration(phoneNum: String, password: String){
+        viewModelScope.launch {
+            when(val result = authUseCases.createUserUseCase.start(phoneNum,password)){
+                is Response.Success -> {
+                    _authStateCompose.value = AuthState.UserCreate(result.dataValue)
+                }
+                is Response.Error -> {
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
 
+    fun changePass(password: String){
+        viewModelScope.launch {
+            val jwt = dataStore.readToken().stateIn(this).value
+
+            when(val result = authUseCases.changePasswordUseCase.start(password, jwt ?:"")){
+                is Response.Success -> {
+                    _authStateCompose.value = AuthState.ChangePass(result.dataValue)
+                }
+                is Response.Error -> {
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
     fun logout() {
         viewModelScope.launch {
             dataStore.clearToken()

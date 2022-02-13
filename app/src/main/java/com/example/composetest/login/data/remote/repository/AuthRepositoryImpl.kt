@@ -8,7 +8,9 @@ import com.example.composetest.login.data.remote.storage.TokenDTO
 import com.example.composetest.login.domain.model.Response
 import com.example.composetest.login.domain.model.Token
 import com.example.composetest.login.domain.model.User
+import com.example.composetest.login.domain.model.auth.ChangePasswordResponse
 import com.example.composetest.login.domain.model.auth.CheckOTPResponse
+import com.example.composetest.login.domain.model.auth.CreateUserResponse
 import com.example.composetest.login.domain.model.auth.SendOTPResponse
 import com.example.composetest.login.domain.model.decodeUserId
 import com.example.composetest.login.domain.repository.AuthRepository
@@ -96,6 +98,32 @@ internal class AuthRepositoryImpl(
                     "checkOTP",
                     "AuthRepositoryImpl  Throwable ${e.message}"
                 )
+                Response.Error("exception message: ${e.message}")
+            }
+        }
+
+    override suspend fun createUser(
+        phoneNum: String,
+        password: String
+    ): Response<CreateUserResponse> =
+        withContext(coroutineDispatcher) {
+            try {
+                val response = authApi.userRegistrationRequest(userRegistration = UserRegistrationRequest(phoneNum,password))
+                Response.Success(response.toDomain())
+            } catch (e: Throwable) {
+                Response.Error("exception message: ${e.message}")
+            }
+        }
+
+    override suspend fun changePassword(
+        jwt:String?,
+        password: String
+    ): Response<ChangePasswordResponse> =
+        withContext(coroutineDispatcher) {
+            try {
+                val response = authApi.passwordResetRequest(passwordReset = PasswordResetRequest(password), authorization = jwt)
+                Response.Success(response.toDomain())
+            } catch (e: Throwable) {
                 Response.Error("exception message: ${e.message}")
             }
         }

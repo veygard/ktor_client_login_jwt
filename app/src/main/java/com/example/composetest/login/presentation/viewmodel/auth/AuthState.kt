@@ -1,8 +1,11 @@
 package com.example.composetest.login.presentation.viewmodel.auth
 
 import com.example.composetest.login.data.remote.model.auth.JWTRefreshResponse
+import com.example.composetest.login.data.remote.model.auth.UserRegistrationRequest
 import com.example.composetest.login.domain.model.User
+import com.example.composetest.login.domain.model.auth.ChangePasswordResponse
 import com.example.composetest.login.domain.model.auth.CheckOTPResponse
+import com.example.composetest.login.domain.model.auth.CreateUserResponse
 import com.example.composetest.login.domain.model.auth.SendOTPResponse
 
 sealed class AuthState {
@@ -14,4 +17,6 @@ sealed class AuthState {
     data class AuthResponse(val loginResponse: JWTRefreshResponse) : AuthState()
     data class SendOtp(val otpResponse: SendOTPResponse) : AuthState()
     data class CheckOtp(val checkOTPResponse: CheckOTPResponse) : AuthState()
+    data class UserCreate(val createUserResponse: CreateUserResponse):AuthState()
+    data class ChangePass(val changePasswordResponse: ChangePasswordResponse):AuthState()
 }

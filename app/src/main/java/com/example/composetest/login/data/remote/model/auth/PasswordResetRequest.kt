@@ -7,11 +7,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PasswordResetRequest (
-    
     @SerialName("password")
     val password: kotlin.String? = null
-
-) {
-
-}
-
+)

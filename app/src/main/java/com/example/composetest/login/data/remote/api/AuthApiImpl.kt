@@ -112,46 +112,20 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
         }
     }
 
-
-    @Suppress("UNCHECKED_CAST")
     override suspend fun userRegistrationRequest(
         contentType: String?,
         authorization: String?,
-        body: UserRegistrationRequest?
+        userRegistration: UserRegistrationRequest?
     ): UserRegistrationResponse {
-        val builder = HttpRequestBuilder()
-
-        builder.method = HttpMethod.Post
-        builder.url {
-            takeFrom(_basePath)
-            encodedPath = encodedPath.let { startingPath ->
-                path("auth-api/v1/register")
-                return@let startingPath + encodedPath.substring(1)
+        return try {
+            _httpClient.post {
+                url("$_basePath/check_otp")
+                contentType(ContentType.Application.Json)
+                body= userRegistration!!
+                headers{
+                    append("Authorization", "Bearer $authorization")
+                }
             }
-        }
-        @Suppress("SENSELESS_COMPARISON")
-        if (body != null) {
-            builder.body = TextContent(
-                _json.encodeToString(
-                    UserRegistrationRequest.serializer(),
-
-                    body
-                ),
-                ContentType.Application.Json.withoutParameters()
-            )
-        }
-
-        with(builder.headers) {
-            append("Accept", "application/json")
-            append("Authorization", "$authorization")
-        }
-
-        try {
-            val serializer = UserRegistrationResponse.serializer()
-
-            //not primitive type
-            val result: String = _httpClient.request(builder)
-            return _json.decodeFromString(serializer, result)
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
         }

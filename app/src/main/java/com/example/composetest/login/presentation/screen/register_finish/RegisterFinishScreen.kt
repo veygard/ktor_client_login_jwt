@@ -9,10 +9,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.composetest.login.R
 import com.example.composetest.login.navigation.AuthFlowEnum
 import com.example.composetest.login.presentation.screen.destinations.LoginScreenDestination
+import com.example.composetest.login.presentation.ui.compose_ui.CircleProgressBar
 import com.example.composetest.login.presentation.ui.compose_ui.CommonButton
 import com.example.composetest.login.presentation.ui.compose_ui.PasswordInputField
 import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
@@ -47,9 +45,12 @@ import kotlin.math.roundToInt
 @Destination
 internal fun RegisterFinishScreen(
     navigator: DestinationsNavigator,
+    phoneNumber: String,
     flow: AuthFlowEnum,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
+    val authStateCompose by authViewModel.authStateCompose.collectAsState()
+
     Scaffold(
         topBar = {
             TransparentTopBar(
@@ -63,6 +64,7 @@ internal fun RegisterFinishScreen(
         },
         backgroundColor = MaterialTheme.colors.onBackground
     ) {
+        CircleProgressBar(authViewModel.loadingState)
         RegisterFinishScreenContent(
             saveButtonAction = {
 

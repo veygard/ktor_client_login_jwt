@@ -57,6 +57,7 @@ fun OtpScreen(
             checkOtpResponseAction(
                 checkOTPResponse = response,
                 navigator = navigator,
+                phoneNumber=phoneNumber,
                 flow = flow,
                 otpScreenErrorState = otpScreenErrorState,
                 clear = { authViewModel.clear() }
@@ -107,6 +108,7 @@ fun OtpScreen(
 private fun checkOtpResponseAction(
     checkOTPResponse: CheckOTPResponse,
     navigator: DestinationsNavigator,
+    phoneNumber: String,
     flow: AuthFlowEnum,
     otpScreenErrorState: OtpScreenErrorState,
     clear: () -> Unit,
@@ -114,7 +116,7 @@ private fun checkOtpResponseAction(
     Log.d("checkOTP", "OtpScreen checkOtpResponseAction, recompose")
     when {
         checkOTPResponse.result == true -> {
-            navigator.navigate(RegisterFinishScreenDestination(flow))
+            navigator.navigate(RegisterFinishScreenDestination(phoneNumber, flow))
         }
         checkOTPResponse.result == false && checkOTPResponse.expired == true -> {
             Log.d("checkOTP", "OtpScreen checkOtpResponseAction, Expired")

@@ -36,8 +36,8 @@ interface AuthApi {
     suspend fun userCheckRequest(contentType: String? = null, body: UserCheckRequest? = null) : UserCheckResponse
 
     suspend fun passwordResetRequest(
-        contentType: kotlin.String? = null,
-        userCheck: PasswordResetRequest? = null,
+        contentType: String? = null,
+        passwordReset: PasswordResetRequest? = null,
         authorization: String?,
     ) : PasswordResetResponse
 }
