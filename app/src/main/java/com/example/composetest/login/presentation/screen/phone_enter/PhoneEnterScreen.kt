@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,7 +12,7 @@ import com.example.composetest.login.R
 import com.example.composetest.login.navigation.AuthFlowEnum
 import com.example.composetest.login.presentation.screen.destinations.LoginScreenDestination
 import com.example.composetest.login.presentation.screen.destinations.OtpScreenDestination
-import com.example.composetest.login.presentation.screen.destinations.RegisterFinishScreenDestination
+import com.example.composetest.login.presentation.ui.compose_ui.CircleProgressBar
 import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
 import com.example.composetest.login.presentation.viewmodel.auth.AuthState
 import com.example.composetest.login.presentation.viewmodel.auth.AuthViewModel
@@ -40,25 +37,26 @@ fun PhoneEnterScreen(
         mutableStateOf("7")
     }
 
-    observeData(
-        authViewModel = authViewModel,
-        chekUserResultAction = { isFound ->
-            chekUserResultAction(
-                isFound = isFound,
-                authFlow,
-                navigator,
-                errorTypeState,
-                openErrorDialogState,
-                phoneNumber
-            )
-        },
-        errorAction = {
-            authViewModel.loadingHide()
-            errorTypeState.value = PhoneEnterScreenErrorEnum.Else
-            openErrorDialogState.value = true
-        }
-
-    )
+    LaunchedEffect(key1 = Unit, block = {
+        observeData(
+            authViewModel = authViewModel,
+            chekUserResultAction = { isFound ->
+                chekUserResultAction(
+                    isFound = isFound,
+                    authFlow,
+                    navigator,
+                    errorTypeState,
+                    openErrorDialogState,
+                    phoneNumber
+                )
+            },
+            errorAction = {
+                authViewModel.loadingHide()
+                errorTypeState.value = PhoneEnterScreenErrorEnum.Else
+                openErrorDialogState.value = true
+            }
+        )
+    })
 
     Scaffold(
         topBar = {
@@ -73,6 +71,7 @@ fun PhoneEnterScreen(
         },
         backgroundColor = MaterialTheme.colors.onBackground,
     ) {
+        CircleProgressBar(authViewModel.loadingState)
         PhoneEnterScreenContent(
             openErrorDialogState,
             phoneNumber,

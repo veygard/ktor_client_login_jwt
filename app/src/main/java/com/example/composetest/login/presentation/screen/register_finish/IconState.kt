@@ -3,7 +3,8 @@ package com.example.composetest.login.presentation.screen.register_finish
 
 import android.content.Context
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.*
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.graphics.Color

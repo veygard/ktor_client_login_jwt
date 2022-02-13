@@ -2,23 +2,21 @@ package com.example.composetest.login.presentation.screen.otp
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.example.composetest.login.presentation.ui.compose_ui.TransparentBackgroundButton
-import kotlinx.coroutines.delay
 import com.example.composetest.login.R
+import com.example.composetest.login.presentation.ui.compose_ui.TransparentBackgroundButton
 import com.example.composetest.login.presentation.ui.theme.buttonTextStyle
+import kotlinx.coroutines.delay
 
 @Composable
 fun CountdownForNewSmSField(
     modifier: Modifier = Modifier,
-    timer:Int = 59,
+    timer:Int = 10,
     moreActionOnResetTimerButton: () -> Unit = {},
 ) {
 

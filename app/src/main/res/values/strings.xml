@@ -23,7 +23,8 @@
     <string name="authorization_error_dialog_title_text">Ошибка авторизации</string>
     <string name="authorization_error_dialog_text">Вы ввели неправильный телефон или пароль. Попробуйте еще раз или воспользуйтесь восстановлением пароля</string>
     <string name="authorization_sms_error_dialog_title_text">Ошибка авторизации по СМС</string>
-    <string name="authorization_sms_error_dialog_text">Вы ввели неправильный Код-СМС. Введите правильный код или сделайте новый запрос на отправку смс</string>
+    <string name="authorization_sms_error_dialog_match_text">Вы ввели неправильный Код-СМС. Введите правильный код или сделайте новый запрос на отправку смс</string>
+    <string name="authorization_sms_error_dialog_expired_text">Срок действия кода истёк. Сделайте новый запрос на отправку смс</string>
     <string name="forgot_password_button_text">Забыли пароль?</string>
     <string name="home_tech_check_up_bottom_sheet_enter_auto_next">Далее</string>
     <string name="sign_up_phone_form_TopBar_title">Зарегистрироваться</string>
@@ -48,6 +49,9 @@
     <string name="phone_enter_screen_change_password_error_text">Данный номер не найден в базе. Для восстановления пароля укажите корректный номер телефона</string>
     <string name="phone_enter_screen_registration_error_title">Номер уже зарегистрирован</string>
     <string name="phone_enter_screen_registration_error_text">Данный номер уже зарегистрирован. Для регистрации укажите другой номер</string>
+
+    <!--OTP-->
+    <string name="otp_screen_got_opt_text">Представьте, что вам пришло смс: номер кода:%1$s. Код действителен в течение 3 минут.</string>
 
     <string name="contentDescription_icon_show_password">Показать пароль</string>
     <string name="contentDescription_icon_telegram">Telegram</string>

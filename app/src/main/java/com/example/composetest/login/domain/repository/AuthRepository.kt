@@ -5,7 +5,6 @@ import com.example.composetest.login.domain.model.Token
 import com.example.composetest.login.domain.model.User
 import com.example.composetest.login.domain.model.auth.CheckOTPResponse
 import com.example.composetest.login.domain.model.auth.SendOTPResponse
-import com.example.composetest.login.navigation.AuthFlowEnum
 
 interface AuthRepository {
 

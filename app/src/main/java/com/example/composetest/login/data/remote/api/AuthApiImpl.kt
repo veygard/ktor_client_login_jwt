@@ -1,9 +1,7 @@
 package com.example.composetest.login.data.remote.api
 
 import android.util.Log
-import com.example.composetest.login.data.remote.model.auth.UserAuthenticationResponse
 import com.example.composetest.login.data.remote.model.auth.*
-import com.example.composetest.login.data.remote.model.auth.PasswordResetResponse
 import com.example.composetest.login.util.Constants
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -21,13 +19,13 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
 
     override suspend fun login(
         contentType: String?,
-        userAuthenticationRequest: UserAuthenticationRequest?
+        userAuthentication: UserAuthenticationRequest?
     ): UserAuthenticationResponse {
         return try {
             _httpClient.post {
                 url("$_basePath/login")
                 contentType(ContentType.Application.Json)
-                body = userAuthenticationRequest!!
+                body = userAuthentication!!
             }
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
@@ -37,17 +35,17 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
 
     override suspend fun userCheckRequest(
         contentType: String?,
-        userCheckRequest: UserCheckRequest?
+        userCheck: UserCheckRequest?
     ): UserCheckResponse {
         return try {
-            Log.d("checkUser", "Api, start. body: ${userCheckRequest?.phoneNum}, path: $_basePath/check-user")
+            Log.d("checkUser", "Api, start. body: ${userCheck?.phoneNum}, path: $_basePath/check-user")
             _httpClient.post {
                 url("$_basePath/check-user")
                 contentType(ContentType.Application.Json)
-                this.body = userCheckRequest!!
+                this.body = userCheck!!
             }
         } catch (pipeline: ReceivePipelineException) {
-            Log.d("checkUser", "Api, error: ${userCheckRequest?.phoneNum}")
+            Log.d("checkUser", "Api, error: ${userCheck?.phoneNum}")
             throw pipeline.cause
         }
     }
@@ -79,14 +77,14 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     @Suppress("UNCHECKED_CAST")
     override suspend fun sendOTPRequest(
         contentType: String?,
-        sendOTPRequest: SendOTPRequest?
+        sendOTP: SendOTPRequest?
     ): SendOTPResponseDTO {
 
         return try {
             _httpClient.post() {
                 url("$_basePath/send_otp")
                 contentType(ContentType.Application.Json)
-                body= sendOTPRequest!!
+                body= sendOTP!!
             }
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
@@ -96,16 +94,20 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
     @Suppress("UNCHECKED_CAST")
     override suspend fun checkOTPRequest(
         contentType: String?,
-        checkOTPRequest: CheckOTPRequest?
+        checkOTP: CheckOTPRequest?
     ): CheckOTPResponseDTO {
 
         return try {
-            _httpClient.get {
+            _httpClient.post {
                 url("$_basePath/check_otp")
                 contentType(ContentType.Application.Json)
-                body= checkOTPRequest!!
+                body= checkOTP!!
             }
         } catch (pipeline: ReceivePipelineException) {
+            Log.d(
+                "checkOTP",
+                "AuthRepositoryImpl  Throwable ${pipeline.message}"
+            )
             throw pipeline.cause
         }
     }

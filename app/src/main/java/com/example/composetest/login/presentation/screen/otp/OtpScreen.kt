@@ -1,37 +1,23 @@
 package com.example.composetest.login.presentation.screen.otp
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import android.util.Log
+import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.composetest.login.R
+import com.example.composetest.login.domain.model.auth.CheckOTPResponse
 import com.example.composetest.login.navigation.AuthFlowEnum
 import com.example.composetest.login.presentation.screen.destinations.LoginScreenDestination
-import com.example.composetest.login.presentation.supports.extensions.formatPhone
-import com.example.composetest.login.presentation.supports.text_validation.PhoneMask
-import com.example.composetest.login.presentation.ui.compose_ui.OneButtonDialog
+import com.example.composetest.login.presentation.screen.destinations.RegisterFinishScreenDestination
+import com.example.composetest.login.presentation.ui.compose_ui.CircleProgressBar
 import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
-import com.example.composetest.login.presentation.ui.theme.Margin
-import com.example.composetest.login.presentation.ui.theme.securityMeasuresTitleStyle
+import com.example.composetest.login.presentation.viewmodel.auth.AuthState
 import com.example.composetest.login.presentation.viewmodel.auth.AuthViewModel
-import com.example.composetest.login.util.SpacingVertical
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
@@ -43,7 +29,54 @@ fun OtpScreen(
     phoneNumber: String,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+
+    val otpCodeState: MutableState<String?> = remember { mutableStateOf(null) }
+    val scaffoldState = rememberScaffoldState()
+
+    val otpScreenErrorState = OtpScreenErrorState(
+        errorState = remember { mutableStateOf(false) },
+        errorCode = remember { mutableStateOf(null) }
+    )
+    val authStateCompose by authViewModel.authStateCompose.collectAsState()
+
+
+
+    /*запрашиваем код отп*/
+    LaunchedEffect(key1 = phoneNumber, block = {
+        authViewModel.loadingShow()
+        authViewModel.sendOtp(phoneNumber)
+    })
+
+    /*запускам обсервера*/
+    observeData(
+        authViewModel = authViewModel,
+        otpCode = otpCodeState,
+        authStateCompose = authStateCompose,
+        checkOtpResponseAction = { response ->
+            checkOtpResponseAction(
+                checkOTPResponse = response,
+                navigator = navigator,
+                flow = flow,
+                otpScreenErrorState = otpScreenErrorState,
+                clear = { authViewModel.clear() }
+            )
+        },
+    )
+
+
+    /*Снекбар при получении кода от сервера*/
+    LaunchedEffect(key1 = otpCodeState.value, block = {
+        otpCodeState.value?.let {
+            scaffoldState.snackbarHostState.showSnackbar(
+                context.getString(R.string.otp_screen_got_opt_text, otpCodeState.value),
+                duration = SnackbarDuration.Long
+            )
+        }
+    })
+
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             TransparentTopBar(
                 title = stringResource(id = R.string.enter_sms_page_top_bar_title)
@@ -53,15 +86,103 @@ fun OtpScreen(
         },
         backgroundColor = MaterialTheme.colors.onBackground
     ) {
+        CircleProgressBar(authViewModel.loadingState)
         OtpScreenContent(
             phoneNumber = phoneNumber,
             sendOptAgain = {
-
+                authViewModel.sendOtp(phoneNumber)
             },
-            otpCodeIsEntered = { otp: String, openErrorDialogState -> },
+            otpCodeIsEntered = { otp: String ->
+                authViewModel.loadingShow()
+                authViewModel.checkOtp(phoneNumber, otp)
+            },
+            otpScreenErrorState = otpScreenErrorState,
+            otpCodeState= otpCodeState
         )
+    }
+}
+
+@ExperimentalMaterialApi
+@ExperimentalComposeUiApi
+private fun checkOtpResponseAction(
+    checkOTPResponse: CheckOTPResponse,
+    navigator: DestinationsNavigator,
+    flow: AuthFlowEnum,
+    otpScreenErrorState: OtpScreenErrorState,
+    clear: () -> Unit,
+) {
+    Log.d("checkOTP", "OtpScreen checkOtpResponseAction, recompose")
+    when {
+        checkOTPResponse.result == true -> {
+            navigator.navigate(RegisterFinishScreenDestination(flow))
+        }
+        checkOTPResponse.result == false && checkOTPResponse.expired == true -> {
+            Log.d("checkOTP", "OtpScreen checkOtpResponseAction, Expired")
+            otpScreenErrorState.errorState.value = true
+            otpScreenErrorState.errorCode.value = OtpScreenErrorCode.Expired
+            clear()
+        }
+        checkOTPResponse.result == false && checkOTPResponse.expired == false -> {
+            Log.d("checkOTP", "OtpScreen checkOtpResponseAction, Not match")
+            otpScreenErrorState.errorState.value = true
+            otpScreenErrorState.errorCode.value = OtpScreenErrorCode.NotMatch
+            clear()
+        }
     }
 
 }
 
+private fun observeData(
+    authViewModel: AuthViewModel,
+    otpCode: MutableState<String?>,
+    checkOtpResponseAction: (checkOTPResponse: CheckOTPResponse) -> Unit,
+    authStateCompose: AuthState?
+) {
+    when (authStateCompose) {
+        is AuthState.CheckOtp -> {
+            authViewModel.loadingHide()
+            Log.d(
+                "checkOTP",
+                "OtpScreen observeData, CheckOtp result is: ${authStateCompose.checkOTPResponse.result}, message:${authStateCompose.checkOTPResponse.message}"
+            )
+            checkOtpResponseAction(authStateCompose.checkOTPResponse)
+        }
+        is AuthState.SendOtp -> {
+            authViewModel.loadingHide()
+            otpCode.value = authStateCompose.otpResponse.otpCode
+        }
+    }
 
+//    authViewModel.authState.addObserver { result ->
+//        when (result) {
+//            is AuthState.SendOtp -> {
+//                authViewModel.loadingHide()
+//                otpCode.value = result.otpResponse.otpCode
+//            }
+//            is AuthState.CheckOtp -> {
+//                authViewModel.loadingHide()
+//                Log.d(
+//                    "checkOTP",
+//                    "OtpScreen observeData, CheckOtp result is: ${result.checkOTPResponse.result}, message:${result.checkOTPResponse.message}"
+//                )
+//                checkOtpResponseAction(result.checkOTPResponse)
+//            }
+//        }
+//    }
+    authViewModel.errorState.addObserver { error ->
+        if (error != "") {
+            Log.d("checkOTP", "OtpScreen observeData, errorState $error")
+            authViewModel.loadingHide()
+        }
+    }
+}
+
+
+data class OtpScreenErrorState(
+    val errorState: MutableState<Boolean>,
+    var errorCode: MutableState<OtpScreenErrorCode?>
+)
+
+enum class OtpScreenErrorCode {
+    Expired, NotMatch
+}

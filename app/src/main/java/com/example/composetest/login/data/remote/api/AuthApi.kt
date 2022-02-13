@@ -14,12 +14,12 @@ interface AuthApi {
 
     suspend fun sendOTPRequest(
         contentType: String? = null,
-        body: SendOTPRequest? = null
+        sendOTP: SendOTPRequest? = null
     ): SendOTPResponseDTO
 
     suspend fun checkOTPRequest(
         contentType: String? = null,
-        body: CheckOTPRequest? = null
+        checkOTP: CheckOTPRequest? = null
     ): CheckOTPResponseDTO
 
     suspend fun login(
@@ -30,14 +30,14 @@ interface AuthApi {
     suspend fun userRegistrationRequest(
         contentType: String? = null,
         authorization: String? = null,
-        body: UserRegistrationRequest? = null
+        userRegistration: UserRegistrationRequest? = null
     ): UserRegistrationResponse
 
     suspend fun userCheckRequest(contentType: String? = null, body: UserCheckRequest? = null) : UserCheckResponse
 
     suspend fun passwordResetRequest(
         contentType: kotlin.String? = null,
-        body: PasswordResetRequest? = null,
+        userCheck: PasswordResetRequest? = null,
         authorization: String?,
     ) : PasswordResetResponse
 }

@@ -2,7 +2,10 @@ package com.example.composetest.login.presentation.ui.compose_ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,11 +15,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.Fragment
-import com.example.composetest.login.presentation.ui.theme.Paragraph_16_Medium
-import com.example.composetest.login.util.SpacingVertical
 import com.example.composetest.login.R
 import com.example.composetest.login.presentation.ui.theme.H_L3
+import com.example.composetest.login.presentation.ui.theme.Paragraph_16_Medium
+import com.example.composetest.login.util.SpacingVertical
 
 @Composable
 fun SomethingWrongBlock() {

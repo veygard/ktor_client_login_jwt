@@ -24,16 +24,19 @@ import com.example.composetest.login.util.SpacingVertical
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
+
 @ExperimentalComposeUiApi
 @Composable
 internal fun OtpScreenContent(
     phoneNumber: String,
-    otpCodeIsEntered: (otp: String, openErrorDialogState: MutableState<Boolean>) -> Unit,
-    sendOptAgain: () -> Unit
+    otpCodeIsEntered: (otp: String) -> Unit,
+    sendOptAgain: () -> Unit,
+    otpScreenErrorState: OtpScreenErrorState,
+    otpCodeState: MutableState<String?>
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val openErrorDialogState = remember { mutableStateOf(false) }
 
     val otpFocusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
@@ -74,7 +77,7 @@ internal fun OtpScreenContent(
                 ),
                 smsCodeLength = 5,
                 whenFull = {
-                    otpCodeIsEntered(it, openErrorDialogState)
+                    otpCodeIsEntered(it)
                 },
                 otpFocusRequester,
                 keyboard,
@@ -90,13 +93,20 @@ internal fun OtpScreenContent(
                     sendOptAgain()
                 },
             )
+
+            SpacingVertical(heightDp = 64)
+            otpCodeState.value?.let{Text(text = "Правильный код: $it")}
         }
 
-        if (openErrorDialogState.value) {
+        if (otpScreenErrorState.errorState.value) {
             val title =
                 stringResource(id = R.string.authorization_sms_error_dialog_title_text)
-            val text = stringResource(id = R.string.authorization_sms_error_dialog_text)
-            OneButtonDialog(title, text, openErrorDialogState,
+            val text = when(otpScreenErrorState.errorCode.value){
+                OtpScreenErrorCode.Expired -> stringResource(id = R.string.authorization_sms_error_dialog_expired_text)
+                OtpScreenErrorCode.NotMatch -> stringResource(id = R.string.authorization_sms_error_dialog_match_text)
+                else -> ""
+            }
+            OneButtonDialog(title, text, otpScreenErrorState.errorState,
                 confirmAction = {
                     otpEditValue.value = ""
                     coroutineScope.launch {

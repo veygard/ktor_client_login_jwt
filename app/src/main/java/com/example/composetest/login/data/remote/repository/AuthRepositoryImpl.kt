@@ -4,13 +4,18 @@ import android.util.Log
 import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.data.remote.api.AuthApi
 import com.example.composetest.login.data.remote.model.auth.*
-import com.example.composetest.login.domain.repository.AuthRepository
 import com.example.composetest.login.data.remote.storage.TokenDTO
-import com.example.composetest.login.domain.model.*
+import com.example.composetest.login.domain.model.Response
+import com.example.composetest.login.domain.model.Token
+import com.example.composetest.login.domain.model.User
 import com.example.composetest.login.domain.model.auth.CheckOTPResponse
 import com.example.composetest.login.domain.model.auth.SendOTPResponse
-import com.example.composetest.login.navigation.AuthFlowEnum
-import kotlinx.coroutines.*
+import com.example.composetest.login.domain.model.decodeUserId
+import com.example.composetest.login.domain.repository.AuthRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 @DelicateCoroutinesApi
 internal class AuthRepositoryImpl(
@@ -70,7 +75,7 @@ internal class AuthRepositoryImpl(
     override suspend fun sendOtp(phoneNum: String): Response<SendOTPResponse> =
         withContext(coroutineDispatcher) {
             try {
-                val response = authApi.sendOTPRequest(body = SendOTPRequest(phoneNum = phoneNum))
+                val response = authApi.sendOTPRequest(sendOTP = SendOTPRequest(phoneNum = phoneNum))
                 Response.Success(response.toDomain())
             } catch (e: Throwable) {
                 Response.Error("exception message: ${e.message}")
@@ -80,9 +85,17 @@ internal class AuthRepositoryImpl(
     override suspend fun checkOtp(phoneNum: String, otp: String): Response<CheckOTPResponse> =
         withContext(coroutineDispatcher) {
             try {
-                val response = authApi.checkOTPRequest(body = CheckOTPRequest(phoneNum, otp))
+                val response = authApi.checkOTPRequest(checkOTP = CheckOTPRequest(phoneNum, otp))
+                Log.d(
+                    "checkOTP",
+                    "AuthRepositoryImpl  Success, result ${response.result}"
+                )
                 Response.Success(response.toDomain())
             } catch (e: Throwable) {
+                Log.d(
+                    "checkOTP",
+                    "AuthRepositoryImpl  Throwable ${e.message}"
+                )
                 Response.Error("exception message: ${e.message}")
             }
         }

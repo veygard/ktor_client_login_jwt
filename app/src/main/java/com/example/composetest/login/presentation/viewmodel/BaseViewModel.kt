@@ -1,5 +1,6 @@
 package com.example.composetest.login.presentation.viewmodel
 
+import androidx.compose.runtime.Composable
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.viewmodel.ViewModel

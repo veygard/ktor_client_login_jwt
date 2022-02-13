@@ -1,6 +1,5 @@
 package com.example.composetest.login.presentation.supports.extensions
 
-import android.text.TextUtils
 import com.example.composetest.login.presentation.supports.text_validation.PhoneMask
 import com.redmadrobot.inputmask.helper.Mask
 import com.redmadrobot.inputmask.model.CaretString
