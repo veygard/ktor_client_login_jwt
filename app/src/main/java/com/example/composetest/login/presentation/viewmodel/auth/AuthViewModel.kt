@@ -19,6 +19,11 @@ class AuthViewModel @Inject constructor(
     private val authUseCases: AuthUseCases,
     private val dataStore: DataStoreOperations
 ) : BaseViewModel() {
+
+    init {
+        Log.d("viewmodel", "vm was created")
+    }
+
     /*тестирование StateFlow + Composable*/
     private val _authStateCompose: MutableStateFlow<AuthState?> = MutableStateFlow(null)
     val authStateCompose: StateFlow<AuthState?> = _authStateCompose
@@ -131,11 +136,11 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun changePass(password: String){
+    fun changePass(password: String, phoneNum: String,){
         viewModelScope.launch {
             val jwt = dataStore.readToken().stateIn(this).value
 
-            when(val result = authUseCases.changePasswordUseCase.start(password, jwt ?:"")){
+            when(val result = authUseCases.changePasswordUseCase.start(password,phoneNum, jwt ?:"")){
                 is Response.Success -> {
                     _authStateCompose.value = AuthState.ChangePass(result.dataValue)
                 }

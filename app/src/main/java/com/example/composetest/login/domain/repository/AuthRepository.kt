@@ -18,6 +18,6 @@ interface AuthRepository {
     suspend fun checkOtp(phoneNum: String, otp:String): Response<CheckOTPResponse>
 
     suspend fun createUser(phoneNum: String, password:String): Response<CreateUserResponse>
-    suspend fun changePassword(jwt:String?, password:String): Response<ChangePasswordResponse>
+    suspend fun changePassword(jwt:String?,   phoneNum: String, password:String): Response<ChangePasswordResponse>
 
 }

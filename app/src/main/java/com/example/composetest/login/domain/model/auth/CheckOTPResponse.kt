@@ -6,3 +6,4 @@ data class CheckOTPResponse(
     val expired: kotlin.Boolean? = null,
     val message: kotlin.String? = null
 )
+

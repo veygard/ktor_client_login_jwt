@@ -19,11 +19,11 @@ import com.example.composetest.login.presentation.supports.extensions.formatPhon
 import com.example.composetest.login.presentation.supports.text_validation.PhoneMask
 import com.example.composetest.login.presentation.ui.compose_ui.OneButtonDialog
 import com.example.composetest.login.presentation.ui.theme.Margin
+import com.example.composetest.login.presentation.ui.theme.bottomBarTextStyle
 import com.example.composetest.login.presentation.ui.theme.securityMeasuresTitleStyle
 import com.example.composetest.login.util.SpacingVertical
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 
 
 @ExperimentalComposeUiApi
@@ -95,13 +95,21 @@ internal fun OtpScreenContent(
             )
 
             SpacingVertical(heightDp = 64)
-            otpCodeState.value?.let{Text(text = "Правильный код: $it")}
+            otpCodeState.value?.let {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.otp_screen_push_text),
+                    color= MaterialTheme.colors.secondary,
+                    style = bottomBarTextStyle,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
         if (otpScreenErrorState.errorState.value) {
             val title =
                 stringResource(id = R.string.authorization_sms_error_dialog_title_text)
-            val text = when(otpScreenErrorState.errorCode.value){
+            val text = when (otpScreenErrorState.errorCode.value) {
                 OtpScreenErrorCode.Expired -> stringResource(id = R.string.authorization_sms_error_dialog_expired_text)
                 OtpScreenErrorCode.NotMatch -> stringResource(id = R.string.authorization_sms_error_dialog_match_text)
                 else -> ""

@@ -12,6 +12,7 @@ import com.example.composetest.login.domain.model.auth.CheckOTPResponse
 import com.example.composetest.login.navigation.AuthFlowEnum
 import com.example.composetest.login.presentation.screen.destinations.LoginScreenDestination
 import com.example.composetest.login.presentation.screen.destinations.RegisterFinishScreenDestination
+import com.example.composetest.login.presentation.supports.AppNotification.makeNotification
 import com.example.composetest.login.presentation.ui.compose_ui.CircleProgressBar
 import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
 import com.example.composetest.login.presentation.viewmodel.auth.AuthState
@@ -41,7 +42,6 @@ fun OtpScreen(
     val authStateCompose by authViewModel.authStateCompose.collectAsState()
 
 
-
     /*запрашиваем код отп*/
     LaunchedEffect(key1 = phoneNumber, block = {
         authViewModel.loadingShow()
@@ -57,7 +57,7 @@ fun OtpScreen(
             checkOtpResponseAction(
                 checkOTPResponse = response,
                 navigator = navigator,
-                phoneNumber=phoneNumber,
+                phoneNumber = phoneNumber,
                 flow = flow,
                 otpScreenErrorState = otpScreenErrorState,
                 clear = { authViewModel.clear() }
@@ -66,12 +66,13 @@ fun OtpScreen(
     )
 
 
-    /*Снекбар при получении кода от сервера*/
+    /*Нотификация при получении кода от сервера*/
     LaunchedEffect(key1 = otpCodeState.value, block = {
         otpCodeState.value?.let {
-            scaffoldState.snackbarHostState.showSnackbar(
-                context.getString(R.string.otp_screen_got_opt_text, otpCodeState.value),
-                duration = SnackbarDuration.Long
+            makeNotification(
+                context = context,
+                title = context.getString(R.string.otp_screen_got_opt_title),
+                text = context.getString(R.string.otp_screen_got_opt_text, otpCodeState.value),
             )
         }
     })
@@ -98,7 +99,7 @@ fun OtpScreen(
                 authViewModel.checkOtp(phoneNumber, otp)
             },
             otpScreenErrorState = otpScreenErrorState,
-            otpCodeState= otpCodeState
+            otpCodeState = otpCodeState
         )
     }
 }
@@ -155,22 +156,6 @@ private fun observeData(
         }
     }
 
-//    authViewModel.authState.addObserver { result ->
-//        when (result) {
-//            is AuthState.SendOtp -> {
-//                authViewModel.loadingHide()
-//                otpCode.value = result.otpResponse.otpCode
-//            }
-//            is AuthState.CheckOtp -> {
-//                authViewModel.loadingHide()
-//                Log.d(
-//                    "checkOTP",
-//                    "OtpScreen observeData, CheckOtp result is: ${result.checkOTPResponse.result}, message:${result.checkOTPResponse.message}"
-//                )
-//                checkOtpResponseAction(result.checkOTPResponse)
-//            }
-//        }
-//    }
     authViewModel.errorState.addObserver { error ->
         if (error != "") {
             Log.d("checkOTP", "OtpScreen observeData, errorState $error")

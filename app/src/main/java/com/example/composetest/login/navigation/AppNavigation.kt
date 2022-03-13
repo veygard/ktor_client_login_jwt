@@ -6,6 +6,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import com.example.composetest.login.presentation.screen.NavGraphs
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.manualcomposablecalls.composable
 
 
 @ExperimentalComposeUiApi

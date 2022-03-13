@@ -33,7 +33,7 @@
     <string name="restore_pass_phone_form_TopBar_title">Сменить пароль</string>
     <string name="phone_num_text">Введите ваш номер</string>
     <string name="countdown_send_sms_again_text">Отправить повторно через </string>
-    <string name="send_sms_again_text">Отправить SMS повторно</string>
+    <string name="send_sms_again_text">Отправить "SMS" повторно</string>
     <string name="write_password_text">Введите пароль</string>
     <string name="write_again_password_text">Повторите пароль</string>
     <string name="first_time_here_text">Впервые у нас ?</string>
@@ -51,7 +51,8 @@
     <string name="phone_enter_screen_registration_error_text">Данный номер уже зарегистрирован. Для регистрации укажите другой номер</string>
 
     <!--OTP-->
-    <string name="otp_screen_got_opt_text">Представьте, что вам пришло смс: номер кода:%1$s. Код действителен в течение 3 минут.</string>
+    <string name="otp_screen_got_opt_title">Имитация СМС-сообщения</string>
+    <string name="otp_screen_got_opt_text">Код: %1$s. Действителен в течение 3 минут.</string>
 
     <string name="contentDescription_icon_show_password">Показать пароль</string>
     <string name="contentDescription_icon_telegram">Telegram</string>
@@ -120,4 +121,5 @@
     <string name="next_title">Далее</string>
     <string name="user_was_registred">Пользователь зарегистрирован</string>
     <string name="password_was_changed">Пароль изменен</string>
+    <string name="otp_screen_push_text">Проверьте push-сообщения.\nТам будет указан код.</string>
 </resources>

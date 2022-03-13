@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import com.example.composetest.login.navigation.AppNavigation
+import com.example.composetest.login.presentation.supports.AppNotification.initNotification
 import com.example.composetest.login.presentation.ui.theme.AppTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +27,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*инициируем нотификацию*/
+        initNotification(this)
+
         setContent {
             AppTheme {
                 navController = rememberNavController()

@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.composetest.login.R
 import com.example.composetest.login.navigation.AuthFlowEnum
 import com.example.composetest.login.presentation.screen.destinations.LoginScreenDestination
+import com.example.composetest.login.presentation.supports.AppNotification.makeNotification
 import com.example.composetest.login.presentation.ui.compose_ui.CircleProgressBar
 import com.example.composetest.login.presentation.ui.compose_ui.CommonButton
 import com.example.composetest.login.presentation.ui.compose_ui.PasswordInputField
@@ -59,7 +60,7 @@ internal fun RegisterFinishScreen(
     observeData(
         authStateCompose,
         successAction = { text->
-            successAction(navigator, scaffold, coroutine, text)
+            successAction(navigator, coroutine, text, context)
         },
         context
     )
@@ -92,13 +93,18 @@ internal fun RegisterFinishScreen(
 @ExperimentalMaterialApi
 fun successAction(
     navigator: DestinationsNavigator,
-    scaffold: ScaffoldState,
     coroutine: CoroutineScope,
-    text: String
+    text: String,
+    context: Context
 ) {
+    navigator.navigate(LoginScreenDestination)
+
     coroutine.launch {
-        scaffold.snackbarHostState.showSnackbar(text, duration = SnackbarDuration.Short)
-        navigator.navigate(LoginScreenDestination)
+        makeNotification(
+            context = context,
+            title = "",
+            text = text,
+        )
     }
 }
 
@@ -118,7 +124,7 @@ private fun saveAction(
     authViewModel: AuthViewModel
 ) {
     when (flow) {
-        AuthFlowEnum.ChangePassword -> authViewModel.changePass(password)
+        AuthFlowEnum.ChangePassword -> authViewModel.changePass(password, phoneNumber)
         AuthFlowEnum.Registration -> authViewModel.registration(
             password = password,
             phoneNum = phoneNumber

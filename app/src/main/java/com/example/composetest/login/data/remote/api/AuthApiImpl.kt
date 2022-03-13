@@ -128,46 +128,17 @@ class AuthApiImpl(httpClient: HttpClient, json: Json) : AuthApi {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     override suspend fun passwordResetRequest(
         contentType: kotlin.String?,
-        body: PasswordResetRequest?,
+        passwordReset: PasswordResetRequest?,
         authorization: String?
     ): PasswordResetResponse {
-        val builder = HttpRequestBuilder()
-
-        builder.method = HttpMethod.Post
-        builder.url {
-            takeFrom(_basePath)
-            encodedPath = encodedPath.let { startingPath ->
-                path("auth-api/v1/password-reset")
-                return@let startingPath + encodedPath.substring(1)
+        return try {
+            _httpClient.post {
+                url("$_basePath/change-password")
+                contentType(ContentType.Application.Json)
+                body= passwordReset!!
             }
-        }
-        @Suppress("SENSELESS_COMPARISON")
-        if (body != null) {
-            builder.body = TextContent(
-
-                _json.encodeToString(
-                    PasswordResetRequest.serializer(),
-
-                    body
-                ),
-                ContentType.Application.Json.withoutParameters()
-            )
-        }
-
-        with(builder.headers) {
-            append("Accept", "application/json")
-            append("Authorization", "$authorization")
-        }
-
-        try {
-            val serializer = PasswordResetResponse.serializer()
-
-            //not primitive type
-            val result: String = _httpClient.request(builder)
-            return _json.decodeFromString(serializer, result)
         } catch (pipeline: ReceivePipelineException) {
             throw pipeline.cause
         }
