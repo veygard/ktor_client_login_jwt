@@ -7,11 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SendOTPRequest (
-    
-    @SerialName("mobile")
-    val mobile: kotlin.String? = null
-
-) {
-
-}
+    @SerialName("phoneNum")
+    val phoneNum: kotlin.String? = null
+)
 

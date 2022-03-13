@@ -1,23 +1,37 @@
 package com.example.composetest.login.presentation.viewmodel.auth
 
 import android.util.Log
+import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.domain.model.Response
 import com.example.composetest.login.domain.use_cases.auth.AuthUseCases
 import com.example.composetest.login.presentation.viewmodel.BaseViewModel
-import com.example.composetest.login.presentation.viewmodel.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.icerock.moko.mvvm.livedata.LiveData
 import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authUseCases: AuthUseCases
+    private val authUseCases: AuthUseCases,
+    private val dataStore: DataStoreOperations
 ) : BaseViewModel() {
 
-    private val _loginState = MutableLiveData<AuthState?>(null)
-    val authState: LiveData<AuthState?> = _loginState
+    init {
+        Log.d("viewmodel", "vm was created")
+    }
+
+    /*тестирование StateFlow + Composable*/
+    private val _authStateCompose: MutableStateFlow<AuthState?> = MutableStateFlow(null)
+    val authStateCompose: StateFlow<AuthState?> = _authStateCompose
+
+    /*тестирование LiveData + Composable*/
+    private val _authState = MutableLiveData<AuthState?>(null)
+    val authState: LiveData<AuthState?> = _authState
+
 
     fun login(phone: String, password: String) {
         viewModelScope.launch {
@@ -27,19 +41,123 @@ class AuthViewModel @Inject constructor(
 
             when (result) {
                 is Response.Success -> {
-                    _loginState.value = AuthState.Success
+                    _authState.value = AuthState.Success
                     Log.d("AuthFlow", "LoginViewModel Success: ${result.dataValue}")
                 }
                 is Response.Error -> {
                     _errorState.value = result.errorValue
                 }
             }
-            _loadingState.value = LoadingState.Hide
-            _loginState.value = null
+        }
+    }
+
+    fun checkUser(phone: String) {
+        viewModelScope.launch {
+            Log.d("checkUser", "started")
+            val result = authUseCases.checkUserUseCase.start(phone)
+
+            when (result) {
+                is Response.Success -> {
+                    Log.d("checkUser", "Response.Success")
+                    _authState.value = AuthState.CheckUser(result.dataValue)
+                }
+                is Response.Error -> {
+                    Log.d("checkUser", "Response.Error")
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
+
+    fun getUser() {
+        viewModelScope.launch {
+            Log.d("getUser", "started")
+            val jwt = dataStore.readToken().stateIn(this).value
+
+            when (val result = authUseCases.getUser.start(jwt)) {
+                is Response.Success -> {
+                    Log.d("getUser", "Response.Success")
+                    _authState.value = AuthState.GotUser(result.dataValue)
+                }
+                is Response.Error -> {
+                    Log.d("getUser", "Response.Error ")
+                    _authState.value = AuthState.NoUser(result.errorValue)
+                }
+            }
+        }
+    }
+
+    fun sendOtp(phoneNum: String) {
+        viewModelScope.launch {
+            when (val result = authUseCases.sendOtpUseCase.start(phoneNum)) {
+                is Response.Success -> {
+                    _authStateCompose.value = AuthState.SendOtp(result.dataValue)
+                }
+                is Response.Error -> {
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
+
+    fun checkOtp(phoneNum: String, otp: String) {
+        viewModelScope.launch {
+            when (val result = authUseCases.checkOtpUseCase.start(phoneNum, otp)) {
+
+                is Response.Success -> {
+                    Log.d(
+                        "checkOTP",
+                        "AuthViewModel  Response.Success, result ${result.dataValue.result}, expired ${result.dataValue.expired}, message ${result.dataValue.message}"
+                    )
+                    _authState.value = AuthState.CheckOtp(result.dataValue)
+                    _authStateCompose.value = AuthState.CheckOtp(result.dataValue)
+                }
+                is Response.Error -> {
+                    Log.d(
+                        "checkOTP",
+                        "AuthViewModel  Response.Error, result ${result.errorValue}"
+                    )
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
+
+    fun registration(phoneNum: String, password: String){
+        viewModelScope.launch {
+            when(val result = authUseCases.createUserUseCase.start(phoneNum,password)){
+                is Response.Success -> {
+                    _authStateCompose.value = AuthState.UserCreate(result.dataValue)
+                }
+                is Response.Error -> {
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
+
+    fun changePass(password: String, phoneNum: String,){
+        viewModelScope.launch {
+            val jwt = dataStore.readToken().stateIn(this).value
+
+            when(val result = authUseCases.changePasswordUseCase.start(password,phoneNum, jwt ?:"")){
+                is Response.Success -> {
+                    _authStateCompose.value = AuthState.ChangePass(result.dataValue)
+                }
+                is Response.Error -> {
+                    _errorState.value = result.errorValue
+                }
+            }
+        }
+    }
+    fun logout() {
+        viewModelScope.launch {
+            dataStore.clearToken()
         }
     }
 
     override fun clear() {
-        _loginState.value = null
+        _authState.value = null
+        _authStateCompose.value = null
     }
 }

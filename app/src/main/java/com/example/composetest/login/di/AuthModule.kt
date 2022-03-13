@@ -1,35 +1,54 @@
 package com.example.composetest.login.di
 
+import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.data.remote.api.AuthApi
 import com.example.composetest.login.data.remote.api.AuthApiImpl
 import com.example.composetest.login.data.remote.repository.AuthRepositoryImpl
-import com.example.composetest.login.di.NetworkModule.provideHttpClient
 import com.example.composetest.login.domain.repository.AuthRepository
-import com.example.composetest.login.domain.use_cases.auth.LoginUseCase
-import com.example.composetest.login.domain.use_cases.auth.AuthUseCases
+import com.example.composetest.login.domain.use_cases.auth.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.serialization.json.Json
 import javax.inject.Singleton
 
+@DelicateCoroutinesApi
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthModule {
 
     @Provides
     @Singleton
-    fun provideAuthApi(): AuthApi = AuthApiImpl(provideHttpClient(), NetworkModule.provideJson())
+    fun provideAuthApi(
+        httpClient: HttpClient,
+        json: Json
+    ): AuthApi = AuthApiImpl(httpClient, json)
 
     @Provides
     @Singleton
-    fun provideAuthRepository(): AuthRepository = AuthRepositoryImpl(provideAuthApi(), NetworkModule.provideCoroutineDispatcher())
+    fun provideAuthRepository(
+        authApi: AuthApi,
+        coroutineDispatcher: CoroutineDispatcher,
+        dataStoreOperations: DataStoreOperations
+    ): AuthRepository = AuthRepositoryImpl(authApi, coroutineDispatcher, dataStoreOperations)
 
     @Provides
     @Singleton
-    fun provideUseCases(): AuthUseCases {
+    fun provideUseCases(
+        authRepository: AuthRepository
+    ): AuthUseCases {
         return AuthUseCases(
-            loginUseCase = LoginUseCase(authRepository = provideAuthRepository())
+            loginUseCase = LoginUseCase(authRepository = authRepository),
+            getUser =  GetUserUseCase(authRepository = authRepository),
+            checkUserUseCase = CheckUserUseCase(authRepository = authRepository),
+            sendOtpUseCase = SendOtpUseCase(authRepository = authRepository),
+            checkOtpUseCase = CheckOtpUseCase(authRepository = authRepository),
+            createUserUseCase = CreateUserUseCase(authRepository),
+            changePasswordUseCase = ChangePasswordUseCase(authRepository)
         )
     }
 

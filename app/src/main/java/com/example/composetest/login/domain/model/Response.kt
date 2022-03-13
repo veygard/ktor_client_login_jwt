@@ -15,6 +15,6 @@ sealed class Response<out T> {
 
 @Serializable
 data class ErrorResponse(
-    val errorCode: Int? = 401,   //if by errorCode you mean the http status code is not really necessary to include here as you already know it from the validateResponse
+    val errorCode: Int? = 401,
     val errorMessage: String
 )

@@ -1,7 +1,5 @@
 package com.example.composetest.login.data.remote.storage
 
-import com.example.composetest.login.data.remote.storage.TokenDTO
-
 
 interface DataStorage {
 

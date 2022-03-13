@@ -2,7 +2,7 @@ package com.example.composetest.login.domain.use_cases.auth
 
 import com.example.composetest.login.domain.repository.AuthRepository
 
-class LoginUseCase constructor(
+class LoginUseCase (
     private val authRepository: AuthRepository
 ) {
 
