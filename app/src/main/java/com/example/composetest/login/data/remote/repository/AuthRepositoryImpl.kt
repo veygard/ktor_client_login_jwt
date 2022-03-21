@@ -5,16 +5,16 @@ import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.data.remote.api.AuthApi
 import com.example.composetest.login.data.remote.model.auth.*
 import com.example.composetest.login.data.remote.storage.TokenDTO
-import com.example.composetest.login.domain.model.Response
-import com.example.composetest.login.domain.model.Token
-import com.example.composetest.login.domain.model.User
+import com.example.composetest.login.domain.model.*
 import com.example.composetest.login.domain.model.auth.*
-import com.example.composetest.login.domain.model.decodeUserId
 import com.example.composetest.login.domain.repository.AuthRepository
+import com.example.composetest.login.domain.model.ServerErrorType.TimeOut
+import io.ktor.client.features.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.net.SocketTimeoutException
 
 @DelicateCoroutinesApi
 internal class AuthRepositoryImpl(
@@ -42,7 +42,7 @@ internal class AuthRepositoryImpl(
             Response.Success(tokenDTO.toDomain())
         } catch (e: Throwable) {
             Log.d("LoginViewModel", "AuthRepositoryImpl auth exception message ${e.message}")
-            Response.Error("exception message: ${e.message}")
+            Response.Error(getErrorType(e, "exception message: ${e.message}"))
         }
     }
 
@@ -56,7 +56,7 @@ internal class AuthRepositoryImpl(
                 )
                 Response.Success(response.isFound!!)
             } catch (e: Throwable) {
-                Response.Error("exception message: ${e.message}")
+                Response.Error(getErrorType(e, "exception message: ${e.message}"))
             }
         }
 
@@ -67,7 +67,7 @@ internal class AuthRepositoryImpl(
             val response = authApi.getUserRequest(userId = userId ?: "", authorization = jwt)
             Response.Success(response.toDomain())
         } catch (e: Throwable) {
-            Response.Error("exception message: ${e.message}")
+            Response.Error(getErrorType(e, "exception message: ${e.message}"))
         }
     }
 
@@ -77,7 +77,7 @@ internal class AuthRepositoryImpl(
                 val response = authApi.sendOTPRequest(sendOTP = SendOTPRequest(phoneNum = phoneNum))
                 Response.Success(response.toDomain())
             } catch (e: Throwable) {
-                Response.Error("exception message: ${e.message}")
+                Response.Error(getErrorType(e, "exception message: ${e.message}"))
             }
         }
 
@@ -95,7 +95,7 @@ internal class AuthRepositoryImpl(
                     "checkOTP",
                     "AuthRepositoryImpl  Throwable ${e.message}"
                 )
-                Response.Error("exception message: ${e.message}")
+                Response.Error(getErrorType(e, "exception message: ${e.message}"))
             }
         }
 
@@ -105,24 +105,41 @@ internal class AuthRepositoryImpl(
     ): Response<CreateUserResponse> =
         withContext(coroutineDispatcher) {
             try {
-                val response = authApi.userRegistrationRequest(userRegistration = UserRegistrationRequest(phoneNum,password))
+                val response = authApi.userRegistrationRequest(
+                    userRegistration = UserRegistrationRequest(
+                        phoneNum,
+                        password
+                    )
+                )
                 Response.Success(response.toDomain())
             } catch (e: Throwable) {
-                Response.Error("exception message: ${e.message}")
+                Response.Error(getErrorType(e, "exception message: ${e.message}"))
             }
         }
 
     override suspend fun changePassword(
-        jwt:String?,
+        jwt: String?,
         phoneNum: String,
         password: String
     ): Response<ChangePasswordResponse> =
         withContext(coroutineDispatcher) {
             try {
-                val response = authApi.passwordResetRequest(passwordReset = PasswordResetRequest(password = password, phoneNumber = phoneNum), authorization = jwt)
+                val response = authApi.passwordResetRequest(
+                    passwordReset = PasswordResetRequest(
+                        password = password,
+                        phoneNumber = phoneNum
+                    ), authorization = jwt
+                )
                 Response.Success(response.toDomain())
             } catch (e: Throwable) {
-                Response.Error("exception message: ${e.message}")
+                Response.Error(getErrorType(e, "exception message: ${e.message}"))
             }
         }
+}
+
+private fun getErrorType(e: Throwable, msg: String? = null): ServerErrorType {
+    return when (e) {
+        is HttpRequestTimeoutException, is SocketTimeoutException -> TimeOut(msg)
+        else -> ServerErrorType.ServerException(msg)
+    }
 }

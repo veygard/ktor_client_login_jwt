@@ -12,6 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.composetest.login.R
 import com.example.composetest.login.presentation.screen.destinations.HomeScreenDestination
 import com.example.composetest.login.presentation.screen.destinations.PhoneEnterScreenDestination
+import com.example.composetest.login.presentation.screen.destinations.TimeOutScreenDestination
 import com.example.composetest.login.presentation.ui.compose_ui.CircleProgressBar
 import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
 import com.example.composetest.login.presentation.viewmodel.auth.AuthState
@@ -72,6 +73,9 @@ private fun observeData(
             is AuthState.Success -> {
                 authViewModel.loadingHide()
                 navigator.navigate(HomeScreenDestination)
+            }
+            is AuthState.ConnectionError -> {
+                navigator.navigate(TimeOutScreenDestination)
             }
         }
     }

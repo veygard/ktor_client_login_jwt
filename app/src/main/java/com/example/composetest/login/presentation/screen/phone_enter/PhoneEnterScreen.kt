@@ -12,6 +12,7 @@ import com.example.composetest.login.R
 import com.example.composetest.login.navigation.AuthFlowEnum
 import com.example.composetest.login.presentation.screen.destinations.LoginScreenDestination
 import com.example.composetest.login.presentation.screen.destinations.OtpScreenDestination
+import com.example.composetest.login.presentation.screen.destinations.TimeOutScreenDestination
 import com.example.composetest.login.presentation.ui.compose_ui.CircleProgressBar
 import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
 import com.example.composetest.login.presentation.viewmodel.auth.AuthState
@@ -54,7 +55,8 @@ fun PhoneEnterScreen(
                 authViewModel.loadingHide()
                 errorTypeState.value = PhoneEnterScreenErrorEnum.Else
                 openErrorDialogState.value = true
-            }
+            },
+            navigator
         )
     })
 
@@ -120,12 +122,16 @@ private fun observeData(
     authViewModel: AuthViewModel,
     chekUserResultAction: (isFound: Boolean?) -> Unit,
     errorAction: () -> Unit,
+    navigator: DestinationsNavigator,
 ) {
     authViewModel.authState.addObserver { result ->
         when (result) {
             is AuthState.CheckUser -> {
                 Log.d("checkUser", "observeData, CheckUser result is: ${result.isFound}")
                 chekUserResultAction(result.isFound)
+            }
+            is AuthState.ConnectionError -> {
+                navigator.navigate(TimeOutScreenDestination)
             }
         }
     }

@@ -9,9 +9,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.composetest.login.R
 import com.example.composetest.login.domain.model.User
 import com.example.composetest.login.presentation.screen.destinations.LoginScreenDestination
-import com.example.composetest.login.presentation.ui.compose_ui.CircleProgressBar
-import com.example.composetest.login.presentation.ui.compose_ui.ScaffoldElement
-import com.example.composetest.login.presentation.ui.compose_ui.TransparentTopBar
+import com.example.composetest.login.presentation.screen.destinations.TimeOutScreenDestination
+import com.example.composetest.login.presentation.screen.timeout.TimeOutScreen
+import com.example.composetest.login.presentation.ui.compose_ui.*
 import com.example.composetest.login.presentation.viewmodel.auth.AuthState
 import com.example.composetest.login.presentation.viewmodel.auth.AuthViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -39,9 +39,8 @@ fun HomeScreen(
                     user.value = result.user
                     authViewModel.loadingHide()
                 }
-                is AuthState.NoUser -> {
-                    isAuthorized.value = false
-                    authViewModel.loadingHide()
+                is AuthState.ConnectionError -> {
+                    isAuthorized.value = null
                 }
             }
         }
@@ -60,24 +59,23 @@ fun HomeScreen(
         mainContent = {
             CircleProgressBar(authViewModel.loadingState)
             /*Когда прошли авторизацию - показываем контент в зависимости от статуса логина*/
-            isAuthorized.value?.let {
-                when (isAuthorized.value) {
-                    true -> {
-                        HomeScreenAuthorizedContent(
-                            userId = user.value?.userId,
-                            logoutClick = {
-                                isAuthorized.value = false
-                                authViewModel.logout()
-                            })
-                    }
-                    false -> {
-                        HomeScreenNotAuthorizedContent(
-                            loginClick = {
-                                navigator.navigate(LoginScreenDestination())
-                            }
-                        )
-                    }
+            when (isAuthorized.value) {
+                true -> {
+                    HomeScreenAuthorizedContent(
+                        userId = user.value?.userId,
+                        logoutClick = {
+                            isAuthorized.value = false
+                            authViewModel.logout()
+                        })
                 }
+                false -> {
+                    HomeScreenNotAuthorizedContent(
+                        loginClick = {
+                            navigator.navigate(LoginScreenDestination())
+                        }
+                    )
+                }
+                null -> navigator.navigate(TimeOutScreenDestination)
             }
         }
     )

@@ -46,6 +46,9 @@ object NetworkModule {
                 }
                 level = LogLevel.ALL
             }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 1000
+            }
 
             HttpResponseValidator {
                 validateResponse { response ->

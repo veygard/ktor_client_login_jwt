@@ -4,13 +4,12 @@ import kotlinx.serialization.Serializable
 
 sealed class Response<out T> {
     data class Success<out T>( val dataValue: T) : Response<T>()
-    data class Error(val errorValue: String?) : Response<Nothing>()
+    data class Error(val errorType: ServerErrorType) : Response<Nothing>()
+}
 
-    fun isSuccess(): Boolean = this is Success
-    fun getData() = (this as Success).dataValue
-
-    fun isError(): Boolean = this is Error
-    fun getError() = (this as Error).errorValue
+sealed class ServerErrorType(open val msg:String? = null){
+    data class TimeOut(override val msg:String?):ServerErrorType(msg)
+    data class ServerException(override val msg:String?):ServerErrorType(msg)
 }
 
 @Serializable

@@ -3,6 +3,7 @@ package com.example.composetest.login.presentation.viewmodel.auth
 import android.util.Log
 import com.example.composetest.login.data.local.model.DataStoreOperations
 import com.example.composetest.login.domain.model.Response
+import com.example.composetest.login.domain.model.ServerErrorType
 import com.example.composetest.login.domain.use_cases.auth.AuthUseCases
 import com.example.composetest.login.presentation.viewmodel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,7 +46,7 @@ class AuthViewModel @Inject constructor(
                     Log.d("AuthFlow", "LoginViewModel Success: ${result.dataValue}")
                 }
                 is Response.Error -> {
-                    _errorState.value = result.errorValue
+                    setStateByErrorType(result.errorType)
                 }
             }
         }
@@ -63,7 +64,7 @@ class AuthViewModel @Inject constructor(
                 }
                 is Response.Error -> {
                     Log.d("checkUser", "Response.Error")
-                    _errorState.value = result.errorValue
+                    setStateByErrorType(result.errorType)
                 }
             }
         }
@@ -81,7 +82,7 @@ class AuthViewModel @Inject constructor(
                 }
                 is Response.Error -> {
                     Log.d("getUser", "Response.Error ")
-                    _authState.value = AuthState.NoUser(result.errorValue)
+                    setStateByErrorType(result.errorType)
                 }
             }
         }
@@ -94,7 +95,7 @@ class AuthViewModel @Inject constructor(
                     _authStateCompose.value = AuthState.SendOtp(result.dataValue)
                 }
                 is Response.Error -> {
-                    _errorState.value = result.errorValue
+                    setStateByErrorType(result.errorType)
                 }
             }
         }
@@ -113,11 +114,7 @@ class AuthViewModel @Inject constructor(
                     _authStateCompose.value = AuthState.CheckOtp(result.dataValue)
                 }
                 is Response.Error -> {
-                    Log.d(
-                        "checkOTP",
-                        "AuthViewModel  Response.Error, result ${result.errorValue}"
-                    )
-                    _errorState.value = result.errorValue
+                    setStateByErrorType(result.errorType)
                 }
             }
         }
@@ -130,7 +127,7 @@ class AuthViewModel @Inject constructor(
                     _authStateCompose.value = AuthState.UserCreate(result.dataValue)
                 }
                 is Response.Error -> {
-                    _errorState.value = result.errorValue
+                    setStateByErrorType(result.errorType)
                 }
             }
         }
@@ -145,7 +142,7 @@ class AuthViewModel @Inject constructor(
                     _authStateCompose.value = AuthState.ChangePass(result.dataValue)
                 }
                 is Response.Error -> {
-                    _errorState.value = result.errorValue
+                    setStateByErrorType(result.errorType)
                 }
             }
         }
@@ -153,6 +150,17 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             dataStore.clearToken()
+        }
+    }
+
+    private fun setStateByErrorType(errorValue: ServerErrorType) {
+        when(errorValue){
+            is ServerErrorType.TimeOut ->{
+                _authState.value = AuthState.ConnectionError(errorValue.msg)
+            }
+            else -> {
+                _errorState.value = errorValue.msg
+            }
         }
     }
 

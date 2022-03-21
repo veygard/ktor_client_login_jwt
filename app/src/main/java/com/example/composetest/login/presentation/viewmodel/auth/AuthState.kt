@@ -19,4 +19,5 @@ sealed class AuthState {
     data class CheckOtp(val checkOTPResponse: CheckOTPResponse) : AuthState()
     data class UserCreate(val createUserResponse: CreateUserResponse):AuthState()
     data class ChangePass(val changePasswordResponse: ChangePasswordResponse):AuthState()
+    data class ConnectionError(val msg:String? = null):AuthState()
 }

@@ -6,6 +6,7 @@
     <string name="home_screen_logout_button">Выйти из профиля</string>
     <string name="home_screen_not_authorized_button">Войти</string>
     <string name="something_wrong_title">Что то пошло не так</string>
+    <string name="timeout_title">Отсутствует подключение к интернет, или сервер временно недоступен</string>
     <string name="something_wrong_text">Попробуйте повторить чуть позже, или свяжитесь с технической поддержкой.</string>
     <string name="something_wrong_tile">Что-то пошло не так</string>
     <string name="login_screen_title">Авторизация</string>
